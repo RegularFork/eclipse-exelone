@@ -83,6 +83,10 @@ public class ExcelService {
         wbToWrite.close();
 	}
 	
+	public void createDayFileForBRE() {
+		
+	}
+	
 	public void setTimeToCopy() {
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("За какое число нужно снять показания?");
