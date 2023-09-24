@@ -21,9 +21,7 @@ public class Main {
 			e.printStackTrace();
 		}
 
-		System.out.println("\n\n===========================\n" + 
-						       "= Готово. Вы великолепны! =\n" +
-						       "===========================");
+		service.printEndMessage();
 	}
 
 }

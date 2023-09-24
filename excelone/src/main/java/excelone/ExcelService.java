@@ -212,6 +212,7 @@ public class ExcelService {
 	// Сетап для создания БРЭ для КЕГОК
 	private void setCurrentDay() throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("\n\n");
 		System.out.println("Введите число месяца для создания файла \"БРЭ для КЕГОК\"");
 		int input = Integer.parseInt(reader.readLine());
 		if (input < 1 && input > 31) {
@@ -221,6 +222,10 @@ public class ExcelService {
 		
 	}
 	
-	
+	public void printEndMessage() {
+		System.out.println("\n\n===========================\n" + 
+			       "= Готово. Вы великолепны! =\n" +
+			       "===========================");
+	}
 
 }
