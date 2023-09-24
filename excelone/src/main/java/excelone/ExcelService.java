@@ -84,7 +84,7 @@ public class ExcelService {
 	}
 	
 	public void createDayFileForBRE() {
-		
+		System.out.println("Method for create BRE-file");
 	}
 	
 	public void setTimeToCopy() {
