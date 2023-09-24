@@ -10,16 +10,20 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 public class Main {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args){
 
 		ExcelService service = new ExcelService();
-//		service.copyOneRow();
-//		service.currentDay = 21;
-//		service.currentHour = 24;
-//		service.copyAllRowsPerDay();
-		service.setTimeToCopy();
 
-		System.out.println("Готово. Вы великолепны!");
+		try {
+			service.chooseMode();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.println("\n\n===========================\n" + 
+						       "= Готово. Вы великолепны! =\n" +
+						       "===========================");
 	}
 
 }
