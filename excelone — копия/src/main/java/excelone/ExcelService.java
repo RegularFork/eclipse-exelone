@@ -3,7 +3,6 @@ package excelone;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,10 +12,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelService {
-	boolean isSuccess = false;
 	private final int SKIP_ROWS_SBRE = 4;
 	private final int SKIP_ROWS_ASKUE = 10;
 	private final int HOURS_IN_DAY = 24;
@@ -32,29 +31,27 @@ public class ExcelService {
 //	private String fileToWritePath = "C:\\Users\\commercial\\Documents\\MyFiles\\excelpoint\\СЕНТЯБРЬ БРЭ result.xlsx";
 	// Original file
 	private String fileToWritePath = "\\\\172.16.16.16\\коммерческий отдел\\СЕНТЯБРЬ БРЭ ежедневный заполнять его!!!.xlsx";
-	private String fileToWriteDailyTemplate = "C:\\Users\\commercial\\Documents\\MyFiles\\excelpoint\\KEGOC_template.xlsx";
+	private String fileToWriteDailyTemplate = "C:\\Users\\commercial\\Documents\\MyFiles\\excelpoint\\БРЭ для KEGOC Bassel template.xlsx";
 	private String fileToWriteDailyPath = "C:\\Users\\commercial\\Desktop\\Суточная ведомость\\";
 	int[] cellNumbersToReadSBRE = { 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
 			35, 37, 39, 41, 47, 49, 42, 44 };
-
+	
 	private void copyAllRowsPerDay() {
 		for (int i = 0; i < currentHour; i++) {
 			currentRow = SKIP_ROWS_ASKUE + i;
 			rowTarget = ((currentDay - 1) * HOURS_IN_DAY + SKIP_ROWS_SBRE) + (i);
 			copyOneRow();
 			System.out.println("День " + currentDay + "; Час " + i + " - " + (i + 1));
-
+			
 		}
 		System.out.println("Done!");
 	}
-
+	
+	
 	private void copyOneRow() {
 		try {
 			double[] rowValues = readRowFromPrimaryFile();
 			writeRowToFile(rowValues);
-		} catch (FileNotFoundException e) {
-			System.out.println(
-					"\nОШИБКА:\nФайл \"" + fileToWritePath.substring(34) + "\" открыт\n" + "НЕВОЗМОЖНО СОХРАНИТЬ!");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -75,63 +72,54 @@ public class ExcelService {
 		wbToRead.close();
 		return readedValue;
 	}
-
 	// Запись массива в Ежедневный БРЭ
-	private void writeRowToFile(double[] rowValues) throws FileNotFoundException, IOException {
+	private void writeRowToFile(double[] rowValues) throws IOException {
 		Cell currentCell = null;
-		System.out.println("Запись в строку " + (rowTarget + 1));
+		System.out.println("Запись в строку " + rowTarget);
 		FileInputStream fis = new FileInputStream(fileToWritePath);
-		Workbook wbToWrite = new XSSFWorkbook(fis);
+		Workbook wbToWrite = WorkbookFactory.create(fis);		
 		Sheet sheetToWrite = wbToWrite.getSheetAt(0);
 		sheetToWrite.setForceFormulaRecalculation(true);
-		Row currentRow = sheetToWrite.getRow(rowTarget);
-		for (int i = 0; i < 28; i++) {
-			currentCell = currentRow.getCell(i + 11);
-			currentCell.setCellValue(rowValues[i]);
-		}
-		currentRow.getCell(5).setCellValue(rowValues[28]);
-		currentRow.getCell(6).setCellValue(rowValues[29]);
-		fis.close();
-		FileOutputStream fos = new FileOutputStream(new File(fileToWritePath));
-		wbToWrite.write(fos);
-		fos.close();
-		wbToWrite.close();
-		isSuccess = true;
+        Row currentRow = sheetToWrite.getRow(rowTarget);
+        for (int i = 0; i < 28; i++) {
+        	currentCell = currentRow.getCell(i + 11);
+        	currentCell.setCellValue(rowValues[i]);
+
+        	
+        }
+        currentRow.getCell(5).setCellValue(rowValues[28]);
+        currentRow.getCell(6).setCellValue(rowValues[29]);
+        fis.close();
+        FileOutputStream fos = new FileOutputStream(new File(fileToWritePath));
+        wbToWrite.write(fos);
+        fos.close();
+        wbToWrite.close();
 	}
+	
 
-	// ======== Создание БРЭ для КЕГОК
-	// =====================================================================
-
+	// ======== Создание БРЭ для КЕГОК =====================================================================
+	
 	private void copyDailyRows() throws IOException {
 		setCurrentDay();
 		sourceFile = fileToWritePath;
-		targetFile = fileToWriteDailyPath + "БРЭ для KEGOC " + currentDay + " сентября.xlsx";
+		targetFile = fileToWriteDailyPath  + "БРЭ для KEGOC " + currentDay + " сентября.xlsx";
 		try {
-			double[][] dailyRows = readDailyRows();
-			writeDailyValues(dailyRows);
-		} catch (IllegalArgumentException e) {
-			System.out.println("\nОШИБКА:\n"
-					+ "В этом месяце меньше дней, чем ты думаешь!");
-		} catch (FileNotFoundException e) {
-			System.out.println("\nОШИБКА:\nФайл \"БРЭ для KEGOC " + currentDay + " сентября.xlsx\" открыт\n"
-					+ "НЕВОЗМОЖНО СОХРАНИТЬ!");
+		double[][] dailyRows = readDailyRows();
+		writeDailyValues(dailyRows);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	// Чтение данных за прошедшие сутки
-	private double[][] readDailyRows() throws IllegalArgumentException, FileNotFoundException, IOException {
+	private double [][] readDailyRows() throws IOException{
+		
 		FileInputStream fis = new FileInputStream(sourceFile);
-		Workbook wb = new XSSFWorkbook(fis);
+		Workbook wb = WorkbookFactory.create(fis);
 		Sheet sheet = wb.getSheetAt(0);
-		double[][] dailyRows = new double[24][30];
+		double[][]dailyRows = new double[24][30];
 		for (int rows = 0; rows < 24; rows++) {
 			int targetRow = ((currentDay - 1) * HOURS_IN_DAY + SKIP_ROWS_SBRE) + (rows);
-			if (targetRow >= sheet.getLastRowNum() - 1) {
-				wb.close();
-				throw new IllegalArgumentException();
-			}	
 			for (int columns = 0; columns < 28; columns++) {
 				dailyRows[rows][columns] = sheet.getRow(targetRow).getCell(columns + 11).getNumericCellValue();
 			}
@@ -143,12 +131,11 @@ public class ExcelService {
 		System.out.println("Данные считаны");
 		return dailyRows;
 	}
-
+	
 	// Запись данных в новый файл БРЭ для КЕГОК
-	private void writeDailyValues(double[][] dailyRows)
-			throws IllegalArgumentException, FileNotFoundException, IOException {
+	private void writeDailyValues(double[][]dailyRows) throws IOException {
 		FileInputStream fis = new FileInputStream(fileToWriteDailyTemplate);
-		Workbook wb = new XSSFWorkbook(fis);
+		Workbook wb = WorkbookFactory.create(fis);
 		Sheet sheet = wb.getSheetAt(0);
 		sheet.setForceFormulaRecalculation(true);
 		for (int rows = 0; rows < 24; rows++) {
@@ -161,60 +148,58 @@ public class ExcelService {
 		}
 		sheet.getRow(0).getCell(0).setCellValue(new GregorianCalendar(2023, currentMonth - 1, currentDay));
 		fis.close();
+		
 		FileOutputStream fos = new FileOutputStream(targetFile);
 		wb.write(fos);
 		wb.close();
 		fos.close();
-		isSuccess = true;
 	}
-
-	// =========== Выбор режима порграммы
-	// =============================================================================
-
-	public void chooseMode() throws IllegalArgumentException, IOException {
-		isSuccess = false;
+	
+	//=========== Выбор режима порграммы =============================================================================
+	
+	public void chooseMode() throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("====================================================\n"
-				+ "= Добро пожаловать в программу \"Ленивая Жопа V1.3\" =\n"
-				+ "====================================================\n");
-		System.out.println("Выбрать действие:\n1 - Копирование данных\n2 - Создание файла для КЕГОК\n");
-		int mode = Integer.parseInt(reader.readLine());
-		System.out.println("Выбран режим  " + mode);
-		if (mode == 1) {
-			setTimeToCopy();
-		} else if (mode == 2) {
-			copyDailyRows();
-		} else {
-			System.out.println("Ошибка ввода. Программа завершена");
+		System.out.println("Ленивая Жопа V1.1" + "\n==================\n");
+			System.out.println("Выбрать действие:\n1 - Копирование данных\n2 - Создание файла для КЕГОК\n");
+			int mode = Integer.parseInt(reader.readLine());
+			System.out.println("Выбран режим  " + mode);
+			if (mode == 1) {
+				setTimeToCopy();
+			}
+			else if (mode == 2) {
+				copyDailyRows();				
+			}
+			else {
+				System.out.println("Ошибка ввода. Программа завершена");
 		}
 	}
-
+	
 	// Сетап для копирования показаний
 	private void setTimeToCopy() throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("====================\n"
 				+ "**  ВНИМАНИЕ: должен быть загружен и сохранён актуальный файл \"РасходПоОбъектам1.xlsx\""
 				+ "\n**  ОСОБОЕ ВНИМАНИЕ: неверно введённая дата перезапишет существующие данные\n\n"
-				+ "За какое число нужно снять показания? (1 - 31):\n");
+				+ "За какое число нужно снять показания? (0 - 31):\n");
 		currentDay = Integer.parseInt(reader.readLine());
-		if (currentDay < 1 || currentDay > 31) {
-			System.out.println("ОШИБКА:\nНеверно выбрана дата: " + currentDay);
+		if (currentDay < 1 && currentDay > 31) {
+			System.out.println("Неверно выбрана дата: " + currentDay);
 			return;
 		}
 		System.out.println("За какой час снять показания? (0 - с начала суток)\n");
 		currentHour = Integer.parseInt(reader.readLine());
-		if (currentHour < 0 || currentHour > 24) {
-			System.out.println("ОШИБКА:\nНеверно выбрано время: " + currentHour);
+		if (currentHour < 0 && currentHour > 24) {
+			System.out.println("Неверно выбрано время: " + currentHour);
 			return;
 		}
 		if (currentHour == 0) {
 			System.out.println("До какого часа скопировать показания? ( 0 - до конца суток)\n");
 			int input = Integer.parseInt(reader.readLine());
-			if (input > 0 || input < 25) {
+			if (input > 0 && input < 25) {
 				currentHour = input;
 				copyAllRowsPerDay();
 			} else {
-				System.out.println("ОШИБКА:\nНеверно выбрано время: " + currentHour);
+				System.out.println("Неверно выбрано время: " + currentHour);
 				return;
 			}
 		} else {
@@ -223,29 +208,19 @@ public class ExcelService {
 			copyOneRow();
 		}
 	}
-
+	
 	// Сетап для создания БРЭ для КЕГОК
 	private void setCurrentDay() throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("\n\n");
 		System.out.println("Введите число месяца для создания файла \"БРЭ для КЕГОК\"");
 		int input = Integer.parseInt(reader.readLine());
-		if (input < 1 || input > 31) {
-			System.out.println("ОШИБКА:\nНеверно введена дата\n");
-			throw new IOException();
-		} else
-			currentDay = input;
-
+		if (input < 1 && input > 31) {
+			System.out.println("Неверно введена дата\nПрограмма завершена");
+			return;
+		} else currentDay = input;
+		
 	}
-
-	public void printEndMessageSuccess() {
-		System.out.println("\n\n===========================\n" + "= Готово. Вы великолепны! =\n"
-				+ "=   Слава ленивым жопам!  =\n" + "===========================");
-	}
-
-	public void printEndMessageFail() {
-		System.out.println("\n\n=================================\n" + "= Программа завершена с ошибкой =\n"
-				+ "=      Жопа ты криворукая!      =\n" + "=====================++++++======");
-	}
+	
+	
 
 }
