@@ -1,13 +1,18 @@
 package excelone;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 
 public class Main2 {
-	public static void main(String[] args){
+	public static void main(String[] args) throws IOException{
 		
 		System.out.println("====================================================\n"
 				+ "= Добро пожаловать в программу \"Ленивая Жопа V1.3\" =\n"
 				+ "====================================================\n");
+		
+            String[] command = {"C:\\Users\\commercial\\Desktop\\test.xlsx"};
+
 
 		ExcelService service = new ExcelService();
 
