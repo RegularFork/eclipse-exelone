@@ -4,19 +4,29 @@ import java.io.IOException;
 
 public class Main2 {
 	public static void main(String[] args){
+		
+		System.out.println("====================================================\n"
+				+ "= Добро пожаловать в программу \"Ленивая Жопа V1.3\" =\n"
+				+ "====================================================\n");
 
 		ExcelService service = new ExcelService();
 
-		try {
-			service.chooseMode();
-		} catch (IOException e) {
-			System.out.println("Всё пошло не так!");;
-		}
+		while(true) {
+			try {
+				service.chooseMode();
+			} catch (IllegalArgumentException e) {
+				System.out.println("Всё сломалось!");
+			} catch (IOException e) {
+				System.out.println("Всё пошло не так!");;
+			}
 
-		if (service.isSuccess) {
-			service.printEndMessageSuccess();
-		} else {
-			service.printEndMessageFail();
+			if (service.isSuccess) {
+				service.printEndMessageSuccess();
+			} else {
+				service.printEndMessageFail();
+			}
+			
+			System.out.println("\n\nЧто-нибудь ещё?\n\n\n");
 		}
 		
 	}
