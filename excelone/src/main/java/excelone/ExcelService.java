@@ -25,11 +25,12 @@ public class ExcelService {
 	private final int SKIP_ROWS_ASKUE = 10;
 	private final int HOURS_IN_DAY = 24;
 	public int currentDay;
+	public int currentMonth;
+	public int currentYear;
 	public int firstHour = 1;
 	public int currentHour = 1;
 	private int currentRow = 32;
 	private int rowTarget = 507;
-	private int currentMonth = 9;
 	String sourceFile;
 	String targetFile;
 	private String fileToReadPath = "C:\\Users\\commercial\\Documents\\РасходПоОбъектам1.xlsx";
@@ -43,7 +44,7 @@ public class ExcelService {
 			35, 37, 39, 41, 47, 49, 42, 44 };
 
 	private void copyAllRowsPerDay() throws IOException {
-		for (int i = 0; i < currentHour; i++) {
+		for (int i = firstHour - 1; i < currentHour; i++) {
 			currentRow = SKIP_ROWS_ASKUE + i;
 			rowTarget = ((currentDay - 1) * HOURS_IN_DAY + SKIP_ROWS_SBRE) + (i);
 			copyOneRow();
