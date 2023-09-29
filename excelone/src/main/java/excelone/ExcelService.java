@@ -25,7 +25,8 @@ public class ExcelService {
 	private final int SKIP_ROWS_ASKUE = 10;
 	private final int HOURS_IN_DAY = 24;
 	public int currentDay;
-	public int currentHour;
+	public int firstHour = 1;
+	public int currentHour = 1;
 	private int currentRow = 32;
 	private int rowTarget = 507;
 	private int currentMonth = 9;

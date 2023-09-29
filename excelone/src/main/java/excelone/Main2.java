@@ -11,10 +11,7 @@ public class Main2 {
 				+ "= Добро пожаловать в программу \"Ленивая Жопа V1.3\" =\n"
 				+ "====================================================\n");
 		
-            String[] command = {"C:\\Users\\commercial\\Desktop\\test.xlsx"};
-
-
-		ExcelService service = new ExcelService();
+            ExcelService service = new ExcelService();
 
 		while(true) {
 			try {
@@ -34,6 +31,11 @@ public class Main2 {
 			System.out.println("\n\nЧто-нибудь ещё?\n\n\n");
 		}
 		
+	}
+
+	public Main2() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 }

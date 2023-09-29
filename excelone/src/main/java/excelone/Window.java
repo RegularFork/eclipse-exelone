@@ -59,6 +59,10 @@ public class Window {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		final ExcelService service = new ExcelService();
+		
+		
+		
 		frame = new JFrame("EXCELONE v2.0");
 		frame.setType(Type.POPUP);
 		frame.getContentPane().setFont(new Font("Arial Narrow", Font.PLAIN, 11));
@@ -119,18 +123,46 @@ public class Window {
 		separator.setBounds(7, 135, 574, 2);
 		frame.getContentPane().add(separator);
 		
-		JComboBox hourFromCombo = new JComboBox();
+		final JComboBox hourFromCombo = new JComboBox();
 		hourFromCombo.setBackground(SystemColor.inactiveCaptionBorder);
 		hourFromCombo.setToolTipText("Указывается прошедший час");
 		hourFromCombo.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
 		hourFromCombo.setBounds(10, 102, 51, 22);
+		hourFromCombo.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				int compareFirst = Integer.parseInt((String) hourFromCombo.getSelectedItem());
+				if (compareFirst < service.currentHour) {
+					service.firstHour = compareFirst;
+					System.out.println("firstHour set to " + service.firstHour);
+				} else {
+				service.firstHour = service.currentHour;
+				System.out.println("firstHour set to " + service.firstHour);
+				hourFromCombo.setSelectedItem(String.valueOf(service.currentHour));
+				}
+			}
+		});
 		frame.getContentPane().add(hourFromCombo);
 		
-		JComboBox hourUntilCombo = new JComboBox();
+		final JComboBox hourUntilCombo = new JComboBox();
 		hourUntilCombo.setBackground(SystemColor.inactiveCaptionBorder);
 		hourUntilCombo.setToolTipText("Указывается прошедший час");
 		hourUntilCombo.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
 		hourUntilCombo.setBounds(81, 102, 51, 22);
+		hourUntilCombo.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				int compareLast = Integer.parseInt((String) hourUntilCombo.getSelectedItem());
+				if (compareLast > service.firstHour) {
+				service.currentHour = compareLast;
+				System.out.println("currentHour set to " + service.currentHour);
+				} else {
+					service.currentHour = service.firstHour;
+					System.out.println("firstHour set to " + service.firstHour);
+					hourUntilCombo.setSelectedItem(String.valueOf(service.firstHour));
+				}
+			}
+		});
 		frame.getContentPane().add(hourUntilCombo);
 		
 		JLabel hourFromLabel = new JLabel("От");
@@ -211,5 +243,6 @@ public class Window {
 		startCopyBreButton_1.setBackground(UIManager.getColor("CheckBox.light"));
 		startCopyBreButton_1.setBounds(322, 209, 204, 23);
 		frame.getContentPane().add(startCopyBreButton_1);
+		
 	}
 }
