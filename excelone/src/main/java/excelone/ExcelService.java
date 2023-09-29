@@ -72,11 +72,9 @@ public class ExcelService {
 		try {
 			compareDate(wbToRead);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			wbToRead.close();
 			throw new IllegalArgumentException();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Row rowToWrite = wbToRead.getSheetAt(0).getRow(currentRow);
@@ -91,22 +89,16 @@ public class ExcelService {
 
 	// Запись массива в Ежедневный БРЭ
 	private void writeRowToFile(double[] rowValues) throws FileNotFoundException, IOException {
-		Cell currentCell = null;
 		System.out.println("Запись в строку " + (rowTarget + 1));
 		FileInputStream fis = new FileInputStream(fileToWritePath);
 		Workbook wbToWrite = new XSSFWorkbook(fis);
 		Sheet sheetToWrite = wbToWrite.getSheetAt(0);
 		sheetToWrite.setForceFormulaRecalculation(true);
-//		Row currentRow = sheetToWrite.getRow(rowTarget);
 		for (int i = 0; i < 28; i++) {
 			sheetToWrite.getRow(rowTarget).getCell(i + 11).setCellValue(rowValues[i]);
-//			currentCell = currentRow.getCell(i + 11);
-//			currentCell.setCellValue(rowValues[i]);
 		}
 		sheetToWrite.getRow(rowTarget).getCell(5).setCellValue(rowValues[28]);
 		sheetToWrite.getRow(rowTarget).getCell(6).setCellValue(rowValues[29]);
-//		currentRow.getCell(5).setCellValue(rowValues[28]);
-//		currentRow.getCell(6).setCellValue(rowValues[29]);
 		fis.close();
 		FileOutputStream fos = new FileOutputStream(new File(fileToWritePath));
 		wbToWrite.write(fos);
@@ -187,6 +179,7 @@ public class ExcelService {
 	// ===========================================
 	private void compareDate(Workbook wbToWrite) throws IllegalArgumentException, IOException {
 		DateFormat df = new SimpleDateFormat("DD/MM/YY");
+		@SuppressWarnings("deprecation")
 		Date dateToday = new Date(2023, 8, currentDay);
 		Date date = wbToWrite.getSheetAt(0).getRow(0).getCell(5).getDateCellValue();
 
@@ -223,7 +216,8 @@ public class ExcelService {
 	private void setTimeToCopy() throws IllegalArgumentException, IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("**  ВНИМАНИЕ:\n"
-				+ "**  В папку \"Документы\" должен быть загружен и сохранён актуальный файл \"РасходПоОбъектам1.xlsx\"\n\n"
+				+ "**  В папку \"C:\\Users\\commercial\\Documents\\\"\n"
+				+ "**  должен быть загружен и сохранён актуальный файл \"РасходПоОбъектам1.xlsx\"\n\n"
 				+ "За какое число нужно снять показания? (1 - 31):\n");
 		currentDay = Integer.parseInt(reader.readLine());
 		System.out.println("====================\n");
