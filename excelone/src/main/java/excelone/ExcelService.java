@@ -33,13 +33,13 @@ public class ExcelService {
 	private int rowTarget = 507;
 	String sourceFile;
 	String targetFile;
-	private String fileToReadPath = "C:\\Users\\commercial\\Documents\\РасходПоОбъектам1.xlsx";
+	public String fileToReadPath = "C:\\Users\\commercial\\Documents\\РасходПоОбъектам1.xlsx";
 	// Test file
 //	private String fileToWritePath = "C:\\Users\\commercial\\Documents\\MyFiles\\excelpoint\\СЕНТЯБРЬ БРЭ result.xlsx";
 	// Original file
-	private String fileToWritePath = "\\\\172.16.16.16\\коммерческий отдел\\СЕНТЯБРЬ БРЭ ежедневный заполнять его!!!.xlsx";
-	private String fileToWriteDailyTemplate = "C:\\Users\\commercial\\Documents\\MyFiles\\excelpoint\\KEGOC_template.xlsx";
-	private String fileToWriteDailyPath = "C:\\Users\\commercial\\Desktop\\Суточная ведомость\\";
+	public String fileToWritePath = "\\\\172.16.16.16\\коммерческий отдел\\СЕНТЯБРЬ БРЭ ежедневный заполнять его!!!.xlsx";
+	public String fileToWriteDailyTemplate = "C:\\Users\\commercial\\Documents\\MyFiles\\excelpoint\\KEGOC_template.xlsx";
+	public String fileToWriteDailyPath = "C:\\Users\\commercial\\Desktop\\Суточная ведомость\\";
 	int[] cellNumbersToReadSBRE = { 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
 			35, 37, 39, 41, 47, 49, 42, 44 };
 
