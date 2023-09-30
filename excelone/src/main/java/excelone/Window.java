@@ -72,6 +72,7 @@ public class Window {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	@SuppressWarnings("deprecation")
 	private void initialize() {
 		final ExcelService service = new ExcelService();
 		
@@ -79,7 +80,7 @@ public class Window {
 		
 		frame = new JFrame("EXCELONE v2.0");
 		frame.getContentPane().setFont(new Font("Arial Narrow", Font.PLAIN, 11));
-		frame.setBounds(100, 100, 600, 500);
+		frame.setBounds(300, 300, 600, 500);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -218,10 +219,10 @@ public class Window {
 		separator.setBounds(7, 257, 574, 2);
 		frame.getContentPane().add(separator);
 		
-		final JComboBox hourFromCombo = new JComboBox();
+		final JComboBox<String> hourFromCombo = new JComboBox<String>();
 		hourFromCombo.setBackground(SystemColor.inactiveCaptionBorder);
 		hourFromCombo.setToolTipText("Указывается прошедший час");
-		hourFromCombo.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
+		hourFromCombo.setModel(new DefaultComboBoxModel<String>(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
 		hourFromCombo.setBounds(10, 53, 51, 22);
 		System.out.println("firstHour " + service.firstHour);
 		hourFromCombo.addActionListener(new ActionListener() {
@@ -240,10 +241,10 @@ public class Window {
 		});
 		frame.getContentPane().add(hourFromCombo);
 		
-		final JComboBox hourUntilCombo = new JComboBox();
+		final JComboBox<String> hourUntilCombo = new JComboBox<String>();
 		hourUntilCombo.setBackground(SystemColor.inactiveCaptionBorder);
 		hourUntilCombo.setToolTipText("Указывается прошедший час");
-		hourUntilCombo.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
+		hourUntilCombo.setModel(new DefaultComboBoxModel<String>(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
 		hourUntilCombo.setBounds(81, 53, 51, 22);
 		System.out.println("CurrentHour " + service.currentHour);
 		hourUntilCombo.addActionListener(new ActionListener() {
@@ -359,7 +360,7 @@ public class Window {
 		textKegocField.setBounds(7, 295, 566, 20);
 		frame.getContentPane().add(textKegocField);
 		
-		JButton setKegocFolderButton = new JButton("Выбрать источник данных");
+		JButton setKegocFolderButton = new JButton("Выбрать папку");
 		setKegocFolderButton.setToolTipText("Выбрать файл \"РасходПоОбъектам\" для извлечения данных");
 		setKegocFolderButton.setBackground(UIManager.getColor("Button.light"));
 		setKegocFolderButton.setBounds(7, 319, 204, 23);
