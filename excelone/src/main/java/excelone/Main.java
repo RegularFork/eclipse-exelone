@@ -21,7 +21,7 @@ public class Main {
 			e.printStackTrace();
 		}
 
-		service.printEndMessage();
+		service.printEndMessageFail();
 	}
 
 }

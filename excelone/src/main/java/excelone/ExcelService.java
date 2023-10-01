@@ -24,26 +24,31 @@ public class ExcelService {
 	private final int SKIP_ROWS_SBRE = 4;
 	private final int SKIP_ROWS_ASKUE = 10;
 	private final int HOURS_IN_DAY = 24;
-	public int currentDay;
-	public int currentMonth;
-	public int currentYear;
+	public int currentDay = 1;
+	public int currentMonth = 1;
+	public int currentYear = 2024;
 	public int firstHour = 1;
 	public int currentHour = 1;
 	private int currentRow = 32;
 	private int rowTarget = 507;
 	String sourceFile;
 	String targetFile;
-	public String fileToReadPath = "C:\\Users\\commercial\\Documents\\РасходПоОбъектам1.xlsx";
+	public String fileToReadPath = "C:\\Users\\Shulk\\git\\eclipse-exelone\\excelone\\resources\\РасходПоОбъектам1.xlsx";
 	// Test file
 //	private String fileToWritePath = "C:\\Users\\commercial\\Documents\\MyFiles\\excelpoint\\СЕНТЯБРЬ БРЭ result.xlsx";
 	// Original file
-	public String fileToWritePath = "\\\\172.16.16.16\\коммерческий отдел\\СЕНТЯБРЬ БРЭ ежедневный заполнять его!!!.xlsx";
+	public String fileToWritePath = "C:\\Users\\Shulk\\git\\eclipse-exelone\\excelone\\resources\\СЕНТЯБРЬ БРЭ result.xlsx";
 	public String fileToWriteDailyTemplate = "C:\\Users\\commercial\\Documents\\MyFiles\\excelpoint\\KEGOC_template.xlsx";
 	public String fileToWriteDailyPath = "C:\\Users\\commercial\\Desktop\\Суточная ведомость\\";
 	int[] cellNumbersToReadSBRE = { 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
 			35, 37, 39, 41, 47, 49, 42, 44 };
 
-	private void copyAllRowsPerDay() throws IOException {
+	public void copyAllRowsPerDay() throws IOException {
+		System.out.println("=======");
+		System.out.println(currentYear + " / " + currentMonth + " / " + currentDay);
+		System.out.println(fileToReadPath);
+		System.out.println(fileToWritePath);
+		System.out.println("=======");
 		for (int i = firstHour - 1; i < currentHour; i++) {
 			currentRow = SKIP_ROWS_ASKUE + i;
 			rowTarget = ((currentDay - 1) * HOURS_IN_DAY + SKIP_ROWS_SBRE) + (i);
@@ -71,6 +76,7 @@ public class ExcelService {
 		double[] readedValue = new double[cellNumbersToReadSBRE.length];
 		FileInputStream fileToRead = new FileInputStream(fileToReadPath);
 		Workbook wbToRead = new XSSFWorkbook(fileToRead);
+		System.out.println("WB is open");
 		try {
 			compareDate(wbToRead);
 		} catch (IllegalArgumentException e) {
@@ -179,15 +185,20 @@ public class ExcelService {
 
 	// =========== Сравнение дат =================
 	// ===========================================
-	private void compareDate(Workbook wbToWrite) throws IllegalArgumentException, IOException {
+	public void compareDate(Workbook wbToWrite) throws IllegalArgumentException, IOException {
 		DateFormat df = new SimpleDateFormat("DD/MM/YY");
 		@SuppressWarnings("deprecation")
-		Date dateToday = new Date(2023, 8, currentDay);
+		Date dateToday = new Date(currentYear, currentMonth - 1, currentDay);
+		System.out.println(currentYear + " / " + currentMonth + " / " + currentDay);
 		Date date = wbToWrite.getSheetAt(0).getRow(0).getCell(5).getDateCellValue();
+		System.out.println(dateToday);
+		System.out.println(date);
 
-		String cell1 = df.format(dateToday);
-		String cell2 = df.format(date);
-		if (cell1.equals(cell2)) {
+//		String cell1 = df.format(dateToday);
+//		String cell2 = df.format(date);
+//		System.out.println(cell1 + "   |||   " + cell2);
+//		if (cell1.equals(cell2)) {
+		if (dateToday.compareTo(date) == 0) {
 			System.out.println("Дата соответствует");
 		} else {
 			System.out.println(
@@ -195,6 +206,7 @@ public class ExcelService {
 			throw new IllegalArgumentException();
 		}
 	}
+	
 
 	// =========== Выбор режима порграммы ==========
 	// ==============================================

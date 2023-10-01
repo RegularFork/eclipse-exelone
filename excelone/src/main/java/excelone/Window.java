@@ -8,6 +8,8 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.awt.event.ActionEvent;
@@ -24,6 +26,8 @@ import java.awt.Window.Type;
 import java.awt.Dialog.ModalExclusionType;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
+
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.raven.datechooser.DateChooser;
@@ -72,7 +76,6 @@ public class Window {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	@SuppressWarnings("deprecation")
 	private void initialize() {
 		final ExcelService service = new ExcelService();
 		
@@ -80,7 +83,7 @@ public class Window {
 		
 		frame = new JFrame("EXCELONE v2.0");
 		frame.getContentPane().setFont(new Font("Arial Narrow", Font.PLAIN, 11));
-		frame.setBounds(300, 300, 600, 500);
+		frame.setBounds(100, 100, 600, 500);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -157,7 +160,7 @@ public class Window {
 		getTargetFileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setCurrentDirectory(new File("\\\\172.16.16.16\\коммерческий отдел\\СЕНТЯБРЬ БРЭ ежедневный заполнять его!!!.xlsx"));
+				fileChooser.setCurrentDirectory(new File("C:\\Users\\Shulk\\git\\eclipse-exelone\\excelone\\resources\\"));
 				// fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
 				fileChooser.setFileFilter(new FileFilter() {
@@ -219,10 +222,10 @@ public class Window {
 		separator.setBounds(7, 257, 574, 2);
 		frame.getContentPane().add(separator);
 		
-		final JComboBox<String> hourFromCombo = new JComboBox<String>();
+		final JComboBox hourFromCombo = new JComboBox();
 		hourFromCombo.setBackground(SystemColor.inactiveCaptionBorder);
 		hourFromCombo.setToolTipText("Указывается прошедший час");
-		hourFromCombo.setModel(new DefaultComboBoxModel<String>(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
+		hourFromCombo.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
 		hourFromCombo.setBounds(10, 53, 51, 22);
 		System.out.println("firstHour " + service.firstHour);
 		hourFromCombo.addActionListener(new ActionListener() {
@@ -241,10 +244,10 @@ public class Window {
 		});
 		frame.getContentPane().add(hourFromCombo);
 		
-		final JComboBox<String> hourUntilCombo = new JComboBox<String>();
+		final JComboBox hourUntilCombo = new JComboBox();
 		hourUntilCombo.setBackground(SystemColor.inactiveCaptionBorder);
 		hourUntilCombo.setToolTipText("Указывается прошедший час");
-		hourUntilCombo.setModel(new DefaultComboBoxModel<String>(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
+		hourUntilCombo.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
 		hourUntilCombo.setBounds(81, 53, 51, 22);
 		System.out.println("CurrentHour " + service.currentHour);
 		hourUntilCombo.addActionListener(new ActionListener() {
@@ -292,7 +295,7 @@ public class Window {
 				super.dateChanged(date, action);
 				service.currentDay = date.getDate();
 				service.currentMonth = date.getMonth() + 1;
-				service.currentYear = date.getYear() + 1900;
+				service.currentYear = date.getYear();
 				System.out.println(service.currentDay + " / " + service.currentMonth + " / " + service.currentYear);
 			}
 
@@ -310,6 +313,22 @@ public class Window {
 		startCopyBreButton.setBackground(UIManager.getColor("Button.light"));
 		startCopyBreButton.setToolTipText("Запустить копирование данных");
 		startCopyBreButton.setBounds(369, 162, 205, 23);
+		startCopyBreButton.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				
+				try {
+					service.copyAllRowsPerDay();
+					System.out.println("Copy Complete!");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}
+		});
 		frame.getContentPane().add(startCopyBreButton);
 		
 		JLabel titleBRE = new JLabel("Копирование данных в \"БРЭ-ежедневный\"");
@@ -360,7 +379,7 @@ public class Window {
 		textKegocField.setBounds(7, 295, 566, 20);
 		frame.getContentPane().add(textKegocField);
 		
-		JButton setKegocFolderButton = new JButton("Выбрать папку");
+		JButton setKegocFolderButton = new JButton("Выбрать источник данных");
 		setKegocFolderButton.setToolTipText("Выбрать файл \"РасходПоОбъектам\" для извлечения данных");
 		setKegocFolderButton.setBackground(UIManager.getColor("Button.light"));
 		setKegocFolderButton.setBounds(7, 319, 204, 23);
@@ -422,4 +441,5 @@ public class Window {
 		frame.revalidate();
 		
 	}
+
 }
