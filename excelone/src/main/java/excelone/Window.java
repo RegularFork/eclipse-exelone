@@ -1,8 +1,10 @@
 package excelone;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -74,9 +76,11 @@ public class Window {
 
 		frame = new JFrame("ЛЕНИВАЯ ЖОПА v2.0");
 		frame.getContentPane().setFont(new Font("Arial Narrow", Font.PLAIN, 11));
-		frame.setBounds(100, 100, 600, 500);
-		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Dimension dimension = toolkit.getScreenSize();
+		frame.setBounds(dimension.width/2 - 300, dimension.height/2 - 260, 600, 520);
+		frame.setResizable(false);
 		frame.getContentPane().setLayout(null);
 
 		textSourceField = new JTextField();
@@ -88,7 +92,7 @@ public class Window {
 		textSourceField.setColumns(10);
 
 		final JLabel progressLabel = new JLabel("");
-		progressLabel.setBounds(7, 415, 567, 22);
+		progressLabel.setBounds(7, 199, 567, 22);
 		frame.getContentPane().add(progressLabel);
 
 		FlatIntelliJLaf.registerCustomDefaultsSource("style");
@@ -140,6 +144,7 @@ public class Window {
 		frame.getContentPane().add(getSourceFileButton);
 
 		JButton cancelSourceFileButton = new JButton("Х");
+		cancelSourceFileButton.setEnabled(false);
 		cancelSourceFileButton.setToolTipText("Отменить выбранный файл");
 		cancelSourceFileButton.setBackground(UIManager.getColor("CheckBox.focus"));
 		cancelSourceFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -200,6 +205,7 @@ public class Window {
 		frame.getContentPane().add(getTargetFileButton);
 
 		cancelTargetFileButton = new JButton("Х");
+		cancelTargetFileButton.setEnabled(false);
 		cancelTargetFileButton.setToolTipText("Отменить выбранный файл");
 		cancelTargetFileButton.setBackground(UIManager.getColor("CheckBox.focus"));
 		cancelTargetFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -222,7 +228,7 @@ public class Window {
 //		frame.getContentPane().add(progressBar);
 
 		JSeparator separator = new JSeparator();
-		separator.setBounds(7, 257, 574, 2);
+		separator.setBounds(7, 232, 567, 2);
 		frame.getContentPane().add(separator);
 
 		final JComboBox hourFromCombo = new JComboBox();
@@ -308,6 +314,8 @@ public class Window {
 				service.currentDay = date.getDate();
 				service.currentMonth = date.getMonth() + 1;
 				service.currentYear = date.getYear();
+				textKegocField.setText(
+						service.fileToWriteDailyPath + "БРЭ для KEGOC Bassel " + service.currentDay + service.getMonthStringName() + ".xlsx");
 				System.out.println(service.currentDay + " / " + service.currentMonth + " / " + service.currentYear);
 			}
 
@@ -381,7 +389,7 @@ public class Window {
 
 		JLabel titleBRE_1 = new JLabel("Создание файла \"БРЭ для КЕГОК\"");
 		titleBRE_1.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 13));
-		titleBRE_1.setBounds(7, 270, 264, 14);
+		titleBRE_1.setBounds(7, 245, 264, 14);
 		frame.getContentPane().add(titleBRE_1);
 
 		textKegocField = new JTextField();
@@ -390,13 +398,13 @@ public class Window {
 				service.fileToWriteDailyPath + "БРЭ для KEGOC Bassel " + service.currentDay + service.getMonthStringName() + ".xlsx");
 		textKegocField.setEditable(false);
 		textKegocField.setColumns(10);
-		textKegocField.setBounds(7, 295, 566, 20);
+		textKegocField.setBounds(7, 268, 566, 20);
 		frame.getContentPane().add(textKegocField);
 
-		JButton setKegocFolderButton = new JButton("Выбрать источник данных");
+		JButton setKegocFolderButton = new JButton("Выбрать папку");
 		setKegocFolderButton.setToolTipText("Выбрать файл \"РасходПоОбъектам\" для извлечения данных");
 		setKegocFolderButton.setBackground(UIManager.getColor("Button.light"));
-		setKegocFolderButton.setBounds(7, 319, 204, 23);
+		setKegocFolderButton.setBounds(7, 294, 204, 23);
 		setKegocFolderButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
@@ -424,16 +432,17 @@ public class Window {
 		frame.getContentPane().add(setKegocFolderButton);
 
 		JButton cancelKegocFileButton = new JButton("Х");
+		cancelKegocFileButton.setEnabled(false);
 		cancelKegocFileButton.setToolTipText("Отменить выбранный файл");
 		cancelKegocFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		cancelKegocFileButton.setBackground(UIManager.getColor("CheckBox.focus"));
-		cancelKegocFileButton.setBounds(222, 319, 41, 23);
+		cancelKegocFileButton.setBounds(222, 294, 41, 23);
 		frame.getContentPane().add(cancelKegocFileButton);
 
 		JButton createFileBre = new JButton("Создать файл");
 		createFileBre.setToolTipText("Создание ежедневного файла \"БРЭ для КЕГОК\"");
 		createFileBre.setBackground(UIManager.getColor("Button.light"));
-		createFileBre.setBounds(370, 319, 204, 23);
+		createFileBre.setBounds(370, 294, 204, 23);
 		createFileBre.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -461,6 +470,71 @@ public class Window {
 		});
 
 		frame.getContentPane().add(createFileBre);
+		
+		JLabel maxLabel = new JLabel("Максимум");
+		maxLabel.setBounds(25, 390, 71, 14);
+		frame.getContentPane().add(maxLabel);
+		
+		JLabel minLabel = new JLabel("Минимум");
+		minLabel.setBounds(181, 390, 71, 14);
+		frame.getContentPane().add(minLabel);
+		
+		JLabel avgLabel = new JLabel("Среднее");
+		avgLabel.setBounds(337, 390, 71, 14);
+		frame.getContentPane().add(avgLabel);
+		
+		JLabel totalLabel = new JLabel("Всего");
+		totalLabel.setBounds(489, 390, 71, 14);
+		frame.getContentPane().add(totalLabel);
+		
+		JSeparator separator_1 = new JSeparator();
+		separator_1.setBounds(7, 327, 567, 2);
+		frame.getContentPane().add(separator_1);
+		
+		JLabel statsDailyLabel = new JLabel("Статистика с начала суток до текущего часа");
+		statsDailyLabel.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 13));
+		statsDailyLabel.setBounds(10, 365, 337, 14);
+		frame.getContentPane().add(statsDailyLabel);
+		
+		final JLabel maxValueLabel = new JLabel("0");
+		maxValueLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		maxValueLabel.setBounds(25, 419, 86, 14);
+		frame.getContentPane().add(maxValueLabel);
+		
+		final JLabel minValueLabel = new JLabel("0");
+		minValueLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		minValueLabel.setBounds(181, 415, 83, 14);
+		frame.getContentPane().add(minValueLabel);
+		
+		final JLabel avgValueLabel = new JLabel("0");
+		avgValueLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		avgValueLabel.setBounds(337, 415, 86, 14);
+		frame.getContentPane().add(avgValueLabel);
+		
+		final JLabel totalValueLabel = new JLabel("0");
+		totalValueLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		totalValueLabel.setBounds(489, 415, 71, 14);
+		frame.getContentPane().add(totalValueLabel);
+		
+		JButton statsButton = new JButton("Получить статистику");
+		statsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					double[] stats = service.getStatistic();
+					maxValueLabel.setText(String.valueOf(Math.round(stats[0])));
+					minValueLabel.setText(String.valueOf(Math.round(stats[1])));
+					avgValueLabel.setText(String.valueOf(Math.round(stats[2])));
+					totalValueLabel.setText(String.valueOf(Math.round(stats[3])));
+				} catch (FileNotFoundException e1) {
+					JOptionPane.showMessageDialog(frame, "Файл недоступен", "ОШИБКА", JOptionPane.ERROR_MESSAGE);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		statsButton.setBounds(7, 443, 205, 23);
+		frame.getContentPane().add(statsButton);
 
 	}
 }

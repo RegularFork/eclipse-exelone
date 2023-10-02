@@ -1,5 +1,9 @@
 package excelone;
 
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +15,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.stream.IntStream;
+
+import javax.swing.JFrame;
+import javax.swing.JProgressBar;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -43,18 +51,20 @@ public class ExcelService {
 			35, 37, 39, 41, 47, 49, 42, 44 };
 
 	public void copyAllRowsPerDay() throws FileNotFoundException, IOException {
+		
 		System.out.println("=======");
 		System.out.println(currentYear + " / " + currentMonth + " / " + currentDay);
 		System.out.println(fileToReadPath);
 		System.out.println(fileToWritePath);
 		System.out.println("=======");
+
 		for (int i = firstHour - 1; i < currentHour; i++) {
 			currentRow = SKIP_ROWS_ASKUE + i;
 			rowTarget = ((currentDay - 1) * HOURS_IN_DAY + SKIP_ROWS_SBRE) + (i);
 			copyOneRow();
 			System.out.println("День " + currentDay + "; Час " + i + " - " + (i + 1));
-
 		}
+
 	}
 
 	private void copyOneRow() throws IllegalArgumentException, IOException {
@@ -146,6 +156,7 @@ public class ExcelService {
 			int targetRow = ((currentDay - 1) * HOURS_IN_DAY + SKIP_ROWS_SBRE) + (rows);
 			if (targetRow >= sheet.getLastRowNum() - 1) {
 				wb.close();
+				fis.close();
 				throw new IllegalArgumentException();
 			}
 			for (int columns = 0; columns < 28; columns++) {
@@ -323,5 +334,67 @@ public class ExcelService {
 		if (currentMonth == 11) return " ноября";
 		if (currentMonth == 12) return " декабря";
 		return " месяц";
+	}
+	
+	public double[] getStatistic() throws FileNotFoundException, IOException {
+		double[] result = new double[4];
+		double[] dailyPowerData = new double[24];
+		try (FileInputStream fis = new FileInputStream(fileToWritePath)){
+			System.out.println(new File(fileToWritePath).getAbsolutePath());
+			Workbook wb = new XSSFWorkbook(fis);
+			Sheet sheet = wb.getSheetAt(0);
+			for (int row = 0; row < 24; row++) {
+				int targetRow = ((currentDay - 1) * HOURS_IN_DAY + SKIP_ROWS_SBRE) + (row);
+				
+				if (targetRow >= sheet.getLastRowNum() - 1) {
+					wb.close();
+					throw new IllegalArgumentException();
+				}
+				dailyPowerData[row] = sheet.getRow(targetRow).getCell(7).getNumericCellValue();
+				System.out.println(dailyPowerData[row]);
+			}
+			wb.close();
+			fis.close();
+			System.out.println("Данные статистики считаны");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		result[0] = getMaxStatistic(dailyPowerData);
+		result[1] = getMinStatistic(dailyPowerData);
+		result[2] = getAvgStatistic(dailyPowerData);
+		result[3] = getTotalStatistic(dailyPowerData);
+		return result;
+	}
+	
+	private double getMaxStatistic(double[] array) {
+		double maxVal = array[0];
+		for (double val : array) {
+			if (val > maxVal) maxVal = val;
+		}
+		return maxVal;
+	}
+	private double getMinStatistic(double[] array) {
+		double minVal = array[0];
+		for (double val : array) {
+			if (val < minVal && val !=0) minVal = val;
+		}
+		return minVal;
+	}
+	private double getAvgStatistic(double[] array) {
+		int count = 24;
+		double sum = 0;
+		for (double val : array) {
+			sum += val;
+			if (val == 0) count--;
+		}
+		return sum / count;
+	}
+	private double getTotalStatistic(double[] array) {
+		double sum = 0;
+		for (double val : array) {
+			sum += val;
+		}
+		return sum;
 	}
 }
