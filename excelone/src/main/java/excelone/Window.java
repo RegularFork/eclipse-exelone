@@ -1,41 +1,32 @@
 package excelone;
 
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JTextField;
-import javax.swing.JButton;
 import java.awt.Font;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.awt.event.ActionEvent;
-import javax.swing.JProgressBar;
-import javax.swing.JSeparator;
-import javax.swing.JSpinner;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import java.awt.Color;
-import java.awt.Window.Type;
-import java.awt.Dialog.ModalExclusionType;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
-
-import org.apache.poi.ss.usermodel.Workbook;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.raven.datechooser.DateChooser;
 import com.raven.datechooser.listener.DateChooserAction;
 import com.raven.datechooser.listener.DateChooserAdapter;
-
-import java.awt.SystemColor;
 
 public class Window {
 
@@ -49,7 +40,7 @@ public class Window {
 	private JTextField textKegocField;
 	private static DateChooser chDate = new DateChooser();
 	private static DateChooser chDate2 = new DateChooser();
-	private final static String FILE_EXTENSION = ".xlsx"; 
+	private final static String FILE_EXTENSION = ".xlsx";
 
 	/**
 	 * Launch the application.
@@ -79,16 +70,15 @@ public class Window {
 	 */
 	private void initialize() {
 		final ExcelService service = new ExcelService();
-		
-		
-		
-		frame = new JFrame("EXCELONE v2.0");
+		service.setCurrentDate();
+
+		frame = new JFrame("ЛЕНИВАЯ ЖОПА v2.0");
 		frame.getContentPane().setFont(new Font("Arial Narrow", Font.PLAIN, 11));
 		frame.setBounds(100, 100, 600, 500);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
+
 		textSourceField = new JTextField();
 		textSourceField.setBackground(SystemColor.inactiveCaptionBorder);
 		textSourceField.setText(service.fileToReadPath);
@@ -96,7 +86,16 @@ public class Window {
 		textSourceField.setBounds(7, 86, 567, 20);
 		frame.getContentPane().add(textSourceField);
 		textSourceField.setColumns(10);
-		
+
+		final JLabel progressLabel = new JLabel("");
+		progressLabel.setBounds(7, 415, 567, 22);
+		frame.getContentPane().add(progressLabel);
+
+		FlatIntelliJLaf.registerCustomDefaultsSource("style");
+		FlatIntelliJLaf.setup();
+
+		frame.revalidate();
+
 		JButton getSourceFileButton = new JButton("Выбрать источник данных");
 		getSourceFileButton.setToolTipText("Выбрать файл \"РасходПоОбъектам\" для извлечения данных");
 		getSourceFileButton.setBackground(UIManager.getColor("Button.light"));
@@ -139,14 +138,14 @@ public class Window {
 			}
 		});
 		frame.getContentPane().add(getSourceFileButton);
-		
+
 		JButton cancelSourceFileButton = new JButton("Х");
 		cancelSourceFileButton.setToolTipText("Отменить выбранный файл");
 		cancelSourceFileButton.setBackground(UIManager.getColor("CheckBox.focus"));
 		cancelSourceFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		cancelSourceFileButton.setBounds(222, 107, 42, 23);
 		frame.getContentPane().add(cancelSourceFileButton);
-		
+
 		textTargetField = new JTextField();
 		textTargetField.setBackground(SystemColor.inactiveCaptionBorder);
 		textTargetField.setText(service.fileToWritePath);
@@ -154,7 +153,7 @@ public class Window {
 		textTargetField.setColumns(10);
 		textTargetField.setBounds(7, 141, 567, 20);
 		frame.getContentPane().add(textTargetField);
-		
+
 		getTargetFileButton = new JButton("Выбрать файл для записи");
 		getTargetFileButton.setToolTipText("Выбрать файл \"Ежедневный БРЭ\" для записи данных");
 		getTargetFileButton.setBackground(UIManager.getColor("Button.light"));
@@ -195,11 +194,11 @@ public class Window {
 				}
 
 			}
-			
+
 		});
 		getTargetFileButton.setBounds(7, 162, 205, 23);
 		frame.getContentPane().add(getTargetFileButton);
-		
+
 		cancelTargetFileButton = new JButton("Х");
 		cancelTargetFileButton.setToolTipText("Отменить выбранный файл");
 		cancelTargetFileButton.setBackground(UIManager.getColor("CheckBox.focus"));
@@ -214,55 +213,60 @@ public class Window {
 		});
 		frame.getContentPane().add(cancelTargetFileButton);
 
-		JProgressBar progressBar = new JProgressBar();
-		progressBar.setBounds(7, 436, 567, 14);
-		progressBar.setValue(30);
-		frame.getContentPane().add(progressBar);
-		
+//		final JProgressBar progressBar = new JProgressBar();
+//		progressBar.setEnabled(false);
+//		progressBar.setStringPainted(true);
+//		progressBar.setIndeterminate(false);
+//		progressBar.setBounds(7, 436, 567, 14);
+//		progressBar.setValue(0);
+//		frame.getContentPane().add(progressBar);
+
 		JSeparator separator = new JSeparator();
 		separator.setBounds(7, 257, 574, 2);
 		frame.getContentPane().add(separator);
-		
+
 		final JComboBox hourFromCombo = new JComboBox();
 		final JComboBox hourUntilCombo = new JComboBox();
 		hourFromCombo.setBackground(SystemColor.inactiveCaptionBorder);
 		hourFromCombo.setToolTipText("Указывается прошедший час");
-		hourFromCombo.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
+		hourFromCombo.setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9",
+				"10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" }));
 		hourFromCombo.setBounds(10, 53, 51, 22);
 		System.out.println("firstHour " + service.firstHour);
 		hourFromCombo.addActionListener(new ActionListener() {
-			
+
 			public void actionPerformed(ActionEvent e) {
 				int compareFirst = Integer.parseInt((String) hourFromCombo.getSelectedItem());
 				if (compareFirst < service.currentHour) {
 					service.firstHour = compareFirst;
 					System.out.println("firstHour set to " + service.firstHour);
 				} else {
-				service.firstHour = compareFirst;
-				service.currentHour = compareFirst;
-				System.out.println("firstHour set to " + service.firstHour);
-				System.out.println("currenttHour up to " + service.currentHour);
-				hourFromCombo.setSelectedItem(String.valueOf(service.firstHour));
-				hourUntilCombo.setSelectedItem(String.valueOf(service.currentHour));
-				
+					service.firstHour = compareFirst;
+					service.currentHour = compareFirst;
+					System.out.println("firstHour set to " + service.firstHour);
+					System.out.println("currenttHour up to " + service.currentHour);
+					hourFromCombo.setSelectedItem(String.valueOf(service.firstHour));
+					hourUntilCombo.setSelectedItem(String.valueOf(service.currentHour));
+
 				}
 			}
 		});
 		frame.getContentPane().add(hourFromCombo);
-		
+
 //		final JComboBox hourUntilCombo = new JComboBox();
 		hourUntilCombo.setBackground(SystemColor.inactiveCaptionBorder);
 		hourUntilCombo.setToolTipText("Указывается прошедший час");
-		hourUntilCombo.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
+		hourUntilCombo.setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9",
+				"10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" }));
 		hourUntilCombo.setBounds(81, 53, 51, 22);
 		System.out.println("CurrentHour " + service.currentHour);
 		hourUntilCombo.addActionListener(new ActionListener() {
-			
+
 			public void actionPerformed(ActionEvent e) {
 				int compareLast = Integer.parseInt((String) hourUntilCombo.getSelectedItem());
 				if (compareLast > service.firstHour) {
-				service.currentHour = compareLast;
-				System.out.println("currentHour set to " + service.currentHour);
+					service.currentHour = compareLast;
+					System.out.println("currentHour set to " + service.currentHour);
 				} else {
 					service.currentHour = compareLast;
 					service.firstHour = compareLast;
@@ -274,17 +278,17 @@ public class Window {
 			}
 		});
 		frame.getContentPane().add(hourUntilCombo);
-		
+
 		JLabel hourFromLabel = new JLabel("От");
 		hourFromLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		hourFromLabel.setBounds(10, 36, 46, 14);
 		frame.getContentPane().add(hourFromLabel);
-		
+
 		JLabel hourUntilLabel = new JLabel("До");
 		hourUntilLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		hourUntilLabel.setBounds(81, 36, 46, 14);
 		frame.getContentPane().add(hourUntilLabel);
-		
+
 		textBreDataField = new JTextField();
 		textBreDataField.setBackground(SystemColor.inactiveCaptionBorder);
 		textBreDataField.setEditable(false);
@@ -300,7 +304,6 @@ public class Window {
 
 			@Override
 			public void dateChanged(Date date, DateChooserAction action) {
-				// TODO Auto-generated method stub
 				super.dateChanged(date, action);
 				service.currentDay = date.getDate();
 				service.currentMonth = date.getMonth() + 1;
@@ -311,66 +314,85 @@ public class Window {
 		});
 		frame.getContentPane().add(textBreDataField);
 		textBreDataField.setColumns(10);
-		
+
 		JLabel dataKEGOCLabel = new JLabel("Дата");
 		dataKEGOCLabel.setBackground(UIManager.getColor("Button.light"));
 		dataKEGOCLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		dataKEGOCLabel.setBounds(159, 36, 46, 14);
 		frame.getContentPane().add(dataKEGOCLabel);
-		
+
 		JButton startCopyBreButton = new JButton("Копировать данные");
 		startCopyBreButton.setBackground(UIManager.getColor("Button.light"));
 		startCopyBreButton.setToolTipText("Запустить копирование данных");
 		startCopyBreButton.setBounds(369, 162, 205, 23);
 		startCopyBreButton.addActionListener(new ActionListener() {
-			
+
 			public void actionPerformed(ActionEvent e) {
-				
+
 				try {
-					if(!service.compareDateAskue()) JOptionPane.showMessageDialog(frame, 
-							("Различные даты в \n" + new File(service.fileToReadPath).getName() + "\nи\n" + new File(service.fileToWritePath).getName()),
-							"Ошибка",
-							JOptionPane.ERROR_MESSAGE);
+					progressLabel.setText("Копирование данных...");
+					if (!service.compareDateAskue())
+						JOptionPane.showMessageDialog(frame,
+								("Различные даты в файлах\n\"" + new File(service.fileToReadPath).getName() + "\"\nи\n\""
+										+ new File(service.fileToWritePath).getName() + "\""),
+								"Ошибка", JOptionPane.ERROR_MESSAGE);
 					else {
-						int input = JOptionPane.showConfirmDialog(frame, ("Скопировать данные в\n" + new File(service.fileToWritePath).getName()), "Подтвердить действие", JOptionPane.YES_NO_OPTION);
-						System.out.println(input);
-//						try {
-//							service.copyAllRowsPerDay();
-//							System.out.println("Copy Complete!");
-//						} catch (IOException e1) {
-//							// TODO Auto-generated catch block
-//							e1.printStackTrace();
-//						}
+						int input = JOptionPane.showConfirmDialog(frame,
+								("Скопировать данные в\n" + new File(service.fileToWritePath).getName()),
+								"Подтвердить действие", JOptionPane.YES_NO_OPTION);
+						if (input == 0) {
+							frame.revalidate();
+							try {
+								service.copyAllRowsPerDay();
+								progressLabel.setText("Выполнено!");
+								JOptionPane.showMessageDialog(frame,
+										("Скопированы данные за " + (service.currentHour - (service.firstHour - 1))
+												+ service.getCorrechHourString()),
+										"Копирование данных завершено", JOptionPane.INFORMATION_MESSAGE);
+								System.out.println("Copy Complete!");
+								System.out.println(input);
+							} catch (FileNotFoundException e1) {
+								// TODO Auto-generated catch block
+								JOptionPane
+										.showMessageDialog(frame,
+												"Файл \"" + new File(service.fileToWritePath).getName()
+														+ "\"\n недоступен для записи",
+												"Ошибка", JOptionPane.ERROR_MESSAGE);
+								System.out.println("Файл недоступен или открыт");
+							}
+						}
 					}
+					progressLabel.setText("");
 				} catch (IllegalArgumentException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}				
+				}
 			}
 		});
 		frame.getContentPane().add(startCopyBreButton);
-		
+
 		JLabel titleBRE = new JLabel("Копирование данных в \"БРЭ-ежедневный\"");
 		titleBRE.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 13));
 		titleBRE.setBounds(10, 11, 264, 14);
 		frame.getContentPane().add(titleBRE);
-		
+
 		JLabel titleBRE_1 = new JLabel("Создание файла \"БРЭ для КЕГОК\"");
 		titleBRE_1.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 13));
 		titleBRE_1.setBounds(7, 270, 264, 14);
 		frame.getContentPane().add(titleBRE_1);
-		
+
 		textKegocField = new JTextField();
 		textKegocField.setBackground(SystemColor.inactiveCaptionBorder);
-		textKegocField.setText("C:\\Users\\commercial\\Desktop\\Суточная ведомость\\" + "БРЭ для KEGOC Bassel " + service.currentDay + " сентября.xlsx");
+		textKegocField.setText(
+				service.fileToWriteDailyPath + "БРЭ для KEGOC Bassel " + service.currentDay + service.getMonthStringName() + ".xlsx");
 		textKegocField.setEditable(false);
 		textKegocField.setColumns(10);
 		textKegocField.setBounds(7, 295, 566, 20);
 		frame.getContentPane().add(textKegocField);
-		
+
 		JButton setKegocFolderButton = new JButton("Выбрать источник данных");
 		setKegocFolderButton.setToolTipText("Выбрать файл \"РасходПоОбъектам\" для извлечения данных");
 		setKegocFolderButton.setBackground(UIManager.getColor("Button.light"));
@@ -378,29 +400,16 @@ public class Window {
 		setKegocFolderButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setCurrentDirectory(new File("C:\\Users\\commercial\\Desktop\\Суточная ведомость\\"));
+				fileChooser.setCurrentDirectory(new File(service.fileToWriteDailyPath));
 				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-//				fileChooser.setFileFilter(new FileFilter() {
-//					@Override
-//					public String getDescription() {
-//						return "JAR";
-//					}
-//
-//					@Override
-//					public boolean accept(File f) {
-//						if (f.getName().endsWith(FILE_EXTENSION) || f.isDirectory())
-//							return true;
-//						return false;
-//					}
-//				});
 
 				fileChooser.showDialog(frame, "Выбрать папку");
 				File f;
 				try {
 					f = fileChooser.getSelectedFile();
-					textKegocField.setText(f.getAbsolutePath() + "\\БРЭ для KEGOC Bassel " + service.currentDay + " сентября.xlsx");
-					service.fileToWriteDailyPath = f.getAbsolutePath();
+					textKegocField.setText(
+							f.getAbsolutePath() + "\\БРЭ для KEGOC Bassel " + service.currentDay + service.getMonthStringName() + ".xlsx");
+					service.fileToWriteDailyPath = f.getAbsolutePath() + "\\";
 					System.out.println(service.fileToWriteDailyPath);
 				} catch (NullPointerException e1) {
 
@@ -413,28 +422,45 @@ public class Window {
 			}
 		});
 		frame.getContentPane().add(setKegocFolderButton);
-		
+
 		JButton cancelKegocFileButton = new JButton("Х");
 		cancelKegocFileButton.setToolTipText("Отменить выбранный файл");
 		cancelKegocFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		cancelKegocFileButton.setBackground(UIManager.getColor("CheckBox.focus"));
 		cancelKegocFileButton.setBounds(222, 319, 41, 23);
 		frame.getContentPane().add(cancelKegocFileButton);
-		
-		JButton startCopyBreButton_1 = new JButton("Создать файл");
-		startCopyBreButton_1.setToolTipText("Создание ежедневного файла \"БРЭ для КЕГОК\"");
-		startCopyBreButton_1.setBackground(UIManager.getColor("Button.light"));
-		startCopyBreButton_1.setBounds(370, 319, 204, 23);
-		frame.getContentPane().add(startCopyBreButton_1);
-		
-		JLabel progressLabel = new JLabel("Progress...");
-		progressLabel.setBounds(7, 415, 119, 22);
-		frame.getContentPane().add(progressLabel);
-		
-		FlatIntelliJLaf.registerCustomDefaultsSource("style");
-		FlatIntelliJLaf.setup();
 
-		frame.revalidate();
-		
+		JButton createFileBre = new JButton("Создать файл");
+		createFileBre.setToolTipText("Создание ежедневного файла \"БРЭ для КЕГОК\"");
+		createFileBre.setBackground(UIManager.getColor("Button.light"));
+		createFileBre.setBounds(370, 319, 204, 23);
+		createFileBre.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				int input = JOptionPane.showConfirmDialog(frame,
+						("Создать файл \n" + "\"БРЭ для KEGOC Bassel " + service.currentDay + service.getMonthStringName() + ".xlsx\"?"),
+						"Подтверждение операции", JOptionPane.YES_NO_OPTION);
+				if (input == 0) {
+					try {
+						service.copyDailyRows();
+						JOptionPane.showMessageDialog(frame,
+								("Файл " + "\"БРЭ для KEGOC Bassel " + service.currentDay + service.getMonthStringName() + ".xlsx\"\nуспешно создан!"),
+								"Файл создан", JOptionPane.INFORMATION_MESSAGE);
+					} catch (FileNotFoundException e1) {
+						JOptionPane
+								.showMessageDialog(frame,
+										("Файл " + "\"БРЭ для KEGOC Bassel " + service.currentDay + service.getMonthStringName() + ".xlsx\"\nнедоступен"),
+										"Ошибка", JOptionPane.ERROR_MESSAGE);
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+
+		frame.getContentPane().add(createFileBre);
+
 	}
 }
