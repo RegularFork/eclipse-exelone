@@ -25,12 +25,12 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
-import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.intellijthemes.*;
+
 import com.raven.datechooser.DateChooser;
 import com.raven.datechooser.listener.DateChooserAction;
 import com.raven.datechooser.listener.DateChooserAdapter;
-import java.awt.Color;
-import java.awt.Window.Type;
+import javax.swing.JToggleButton;
 
 public class Window {
 
@@ -38,7 +38,6 @@ public class Window {
 	private JTextField textSourceField;
 	private JTextField textTargetField;
 	private JButton getTargetFileButton;
-	private JButton cancelTargetFileButton;
 	private JTextField textBreDataField;
 	private JTextField textDataKegocField;
 	private JTextField textKegocField;
@@ -73,11 +72,11 @@ public class Window {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		FlatDraculaIJTheme.setup();
 		final ExcelService service = new ExcelService();
 		service.setCurrentDate();
 
 		frame = new JFrame("ЛЕНИВАЯ ЖОПА v2.0");
-		frame.setType(Type.POPUP);
 		frame.getContentPane().setFont(new Font("Arial Narrow", Font.PLAIN, 11));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -87,7 +86,7 @@ public class Window {
 		frame.getContentPane().setLayout(null);
 
 		textSourceField = new JTextField();
-		textSourceField.setBackground(SystemColor.inactiveCaptionBorder);
+//		textSourceField.setBackground(SystemColor.inactiveCaptionBorder);
 		textSourceField.setText(service.fileToReadPath);
 		textSourceField.setEditable(false);
 		textSourceField.setBounds(7, 86, 567, 20);
@@ -98,15 +97,20 @@ public class Window {
 		progressLabel.setBounds(7, 199, 567, 22);
 		frame.getContentPane().add(progressLabel);
 
-		FlatIntelliJLaf.registerCustomDefaultsSource("style");
-		FlatIntelliJLaf.setup();
+
+//		FlatArcOrangeIJTheme.setup();
+
+		
+		
+		//		FlatIntelliJLaf.registerCustomDefaultsSource("style");
+//		FlatIntelliJLaf.setup();
 
 		frame.revalidate();
 
 		JButton getSourceFileButton = new JButton("Выбрать источник данных");
 		getSourceFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		getSourceFileButton.setToolTipText("Выбрать файл \"РасходПоОбъектам\" для извлечения данных");
-		getSourceFileButton.setBackground(SystemColor.text);
+//		getSourceFileButton.setBackground(SystemColor.text);
 		getSourceFileButton.setBounds(7, 107, 205, 23);
 		getSourceFileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -147,16 +151,8 @@ public class Window {
 		});
 		frame.getContentPane().add(getSourceFileButton);
 
-		JButton cancelSourceFileButton = new JButton("Х");
-		cancelSourceFileButton.setEnabled(false);
-		cancelSourceFileButton.setToolTipText("Отменить выбранный файл");
-		cancelSourceFileButton.setBackground(UIManager.getColor("CheckBox.focus"));
-		cancelSourceFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
-		cancelSourceFileButton.setBounds(222, 107, 42, 23);
-		frame.getContentPane().add(cancelSourceFileButton);
-
 		textTargetField = new JTextField();
-		textTargetField.setBackground(SystemColor.inactiveCaptionBorder);
+//		textTargetField.setBackground(SystemColor.inactiveCaptionBorder);
 		textTargetField.setText(service.fileToWritePath);
 		textTargetField.setEditable(false);
 		textTargetField.setColumns(10);
@@ -166,7 +162,7 @@ public class Window {
 		getTargetFileButton = new JButton("Выбрать файл для записи");
 		getTargetFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		getTargetFileButton.setToolTipText("Выбрать файл \"Ежедневный БРЭ\" для записи данных");
-		getTargetFileButton.setBackground(SystemColor.text);
+//		getTargetFileButton.setBackground(SystemColor.text);
 		getTargetFileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
@@ -209,21 +205,6 @@ public class Window {
 		getTargetFileButton.setBounds(7, 162, 205, 23);
 		frame.getContentPane().add(getTargetFileButton);
 
-		cancelTargetFileButton = new JButton("Х");
-		cancelTargetFileButton.setEnabled(false);
-		cancelTargetFileButton.setToolTipText("Отменить выбранный файл");
-		cancelTargetFileButton.setBackground(UIManager.getColor("CheckBox.focus"));
-		cancelTargetFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
-		cancelTargetFileButton.setBounds(222, 162, 42, 23);
-		cancelTargetFileButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				textTargetField.setText("Пусто");
-				service.fileToWritePath = "";
-				System.out.println("Target reset");
-			}
-		});
-		frame.getContentPane().add(cancelTargetFileButton);
-
 //		final JProgressBar progressBar = new JProgressBar();
 //		progressBar.setEnabled(false);
 //		progressBar.setStringPainted(true);
@@ -238,7 +219,7 @@ public class Window {
 
 		final JComboBox hourFromCombo = new JComboBox();
 		final JComboBox hourUntilCombo = new JComboBox();
-		hourFromCombo.setBackground(SystemColor.inactiveCaptionBorder);
+//		hourFromCombo.setBackground(SystemColor.inactiveCaptionBorder);
 		hourFromCombo.setToolTipText("Указывается прошедший час");
 		hourFromCombo.setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9",
 				"10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" }));
@@ -265,7 +246,7 @@ public class Window {
 		frame.getContentPane().add(hourFromCombo);
 
 //		final JComboBox hourUntilCombo = new JComboBox();
-		hourUntilCombo.setBackground(SystemColor.inactiveCaptionBorder);
+//		hourUntilCombo.setBackground(SystemColor.inactiveCaptionBorder);
 		hourUntilCombo.setToolTipText("Указывается прошедший час");
 		hourUntilCombo.setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9",
 				"10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" }));
@@ -301,7 +282,7 @@ public class Window {
 		frame.getContentPane().add(hourUntilLabel);
 
 		textBreDataField = new JTextField();
-		textBreDataField.setBackground(SystemColor.inactiveCaptionBorder);
+//		textBreDataField.setBackground(SystemColor.inactiveCaptionBorder);
 		textBreDataField.setEditable(false);
 		textBreDataField.setToolTipText("Дата снятия показаний");
 		textBreDataField.setBounds(142, 53, 86, 22);
@@ -318,7 +299,7 @@ public class Window {
 				super.dateChanged(date, action);
 				service.currentDay = date.getDate();
 				service.currentMonth = date.getMonth() + 1;
-				service.currentYear = date.getYear();
+				service.currentYear = date.getYear() + 1900;
 				textKegocField.setText(
 						service.fileToWriteDailyPath + "БРЭ для KEGOC Bassel " + service.currentDay + service.getMonthStringName() + ".xlsx");
 				System.out.println(service.currentDay + " / " + service.currentMonth + " / " + service.currentYear);
@@ -329,14 +310,14 @@ public class Window {
 		textBreDataField.setColumns(10);
 
 		JLabel dataKEGOCLabel = new JLabel("Дата");
-		dataKEGOCLabel.setBackground(UIManager.getColor("Button.light"));
+//		dataKEGOCLabel.setBackground(UIManager.getColor("Button.light"));
 		dataKEGOCLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		dataKEGOCLabel.setBounds(159, 36, 46, 14);
 		frame.getContentPane().add(dataKEGOCLabel);
 
 		JButton startCopyBreButton = new JButton("Копировать данные");
 		startCopyBreButton.setFont(new Font("Tahoma", Font.BOLD, 11));
-		startCopyBreButton.setBackground(SystemColor.inactiveCaption);
+//		startCopyBreButton.setBackground(SystemColor.inactiveCaption);
 		startCopyBreButton.setToolTipText("Запустить копирование данных");
 		startCopyBreButton.setBounds(369, 162, 205, 23);
 		startCopyBreButton.addActionListener(new ActionListener() {
@@ -399,7 +380,7 @@ public class Window {
 		frame.getContentPane().add(titleBRE_1);
 
 		textKegocField = new JTextField();
-		textKegocField.setBackground(SystemColor.inactiveCaptionBorder);
+//		textKegocField.setBackground(SystemColor.inactiveCaptionBorder);
 		textKegocField.setText(
 				service.fileToWriteDailyPath + "БРЭ для KEGOC Bassel " + service.currentDay + service.getMonthStringName() + ".xlsx");
 		textKegocField.setEditable(false);
@@ -410,7 +391,7 @@ public class Window {
 		JButton setKegocFolderButton = new JButton("Выбрать папку");
 		setKegocFolderButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		setKegocFolderButton.setToolTipText("Выбрать файл \"РасходПоОбъектам\" для извлечения данных");
-		setKegocFolderButton.setBackground(SystemColor.text);
+//		setKegocFolderButton.setBackground(SystemColor.text);
 		setKegocFolderButton.setBounds(7, 294, 204, 23);
 		setKegocFolderButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -438,18 +419,10 @@ public class Window {
 		});
 		frame.getContentPane().add(setKegocFolderButton);
 
-		JButton cancelKegocFileButton = new JButton("Х");
-		cancelKegocFileButton.setEnabled(false);
-		cancelKegocFileButton.setToolTipText("Отменить выбранный файл");
-		cancelKegocFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
-		cancelKegocFileButton.setBackground(UIManager.getColor("CheckBox.focus"));
-		cancelKegocFileButton.setBounds(222, 294, 41, 23);
-		frame.getContentPane().add(cancelKegocFileButton);
-
 		JButton createFileBre = new JButton("Создать файл");
 		createFileBre.setFont(new Font("Tahoma", Font.BOLD, 11));
 		createFileBre.setToolTipText("Создание ежедневного файла \"БРЭ для КЕГОК\"");
-		createFileBre.setBackground(SystemColor.inactiveCaption);
+//		createFileBre.setBackground(SystemColor.inactiveCaption);
 		createFileBre.setBounds(370, 294, 204, 23);
 		createFileBre.addActionListener(new ActionListener() {
 
@@ -534,7 +507,7 @@ public class Window {
 		
 		JButton statsButton = new JButton("Получить статистику");
 		statsButton.setFont(new Font("Tahoma", Font.BOLD, 11));
-		statsButton.setBackground(SystemColor.text);
+//		statsButton.setBackground(SystemColor.text);
 		statsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
