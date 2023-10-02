@@ -3,7 +3,6 @@ package excelone;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,15 +21,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
-import com.formdev.flatlaf.intellijthemes.*;
-
+import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
 import com.raven.datechooser.DateChooser;
 import com.raven.datechooser.listener.DateChooserAction;
 import com.raven.datechooser.listener.DateChooserAdapter;
-import javax.swing.JToggleButton;
 
 public class Window {
 
@@ -74,6 +70,7 @@ public class Window {
 	private void initialize() {
 		FlatDraculaIJTheme.setup();
 		final ExcelService service = new ExcelService();
+		
 		service.setCurrentDate();
 
 		frame = new JFrame("ЛЕНИВАЯ ЖОПА v2.0");
@@ -81,7 +78,7 @@ public class Window {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Dimension dimension = toolkit.getScreenSize();
-		frame.setBounds(dimension.width/2 - 300, dimension.height/2 - 260, 600, 520);
+		frame.setBounds(dimension.width/2 - 300, dimension.height/2 - 260, 600, 552);
 		frame.setResizable(false);
 		frame.getContentPane().setLayout(null);
 
@@ -96,6 +93,13 @@ public class Window {
 		final JLabel progressLabel = new JLabel("");
 		progressLabel.setBounds(7, 199, 567, 22);
 		frame.getContentPane().add(progressLabel);
+		frame.setVisible(true);
+		frame.revalidate();
+		
+		if (!service.checkTrial()) {
+			JOptionPane.showMessageDialog(frame, "Тестовый период окончен", "ВНИМАНИЕ!", JOptionPane.WARNING_MESSAGE);
+			System.exit(0);
+		}
 
 
 //		FlatArcOrangeIJTheme.setup();
@@ -105,7 +109,6 @@ public class Window {
 		//		FlatIntelliJLaf.registerCustomDefaultsSource("style");
 //		FlatIntelliJLaf.setup();
 
-		frame.revalidate();
 
 		JButton getSourceFileButton = new JButton("Выбрать источник данных");
 		getSourceFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -390,7 +393,7 @@ public class Window {
 
 		JButton setKegocFolderButton = new JButton("Выбрать папку");
 		setKegocFolderButton.setFont(new Font("Tahoma", Font.BOLD, 11));
-		setKegocFolderButton.setToolTipText("Выбрать файл \"РасходПоОбъектам\" для извлечения данных");
+		setKegocFolderButton.setToolTipText("Выбрать папку для сохранения файла");
 //		setKegocFolderButton.setBackground(SystemColor.text);
 		setKegocFolderButton.setBounds(7, 294, 204, 23);
 		setKegocFolderButton.addActionListener(new ActionListener() {
@@ -526,6 +529,16 @@ public class Window {
 		});
 		statsButton.setBounds(7, 447, 205, 23);
 		frame.getContentPane().add(statsButton);
+		
+		JSeparator separator_1_1 = new JSeparator();
+		separator_1_1.setBounds(7, 481, 567, 2);
+		frame.getContentPane().add(separator_1_1);
+		
+		JLabel lblNewLabel = new JLabel("От Романа Сидорова специально для Космических диспетчеров BasselGroup LLS  ©  2023 ");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.TRAILING);
+		lblNewLabel.setFont(new Font("Tahoma", Font.ITALIC, 11));
+		lblNewLabel.setBounds(7, 488, 567, 14);
+		frame.getContentPane().add(lblNewLabel);
 
 	}
 }

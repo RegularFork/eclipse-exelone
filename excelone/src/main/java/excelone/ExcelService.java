@@ -1,9 +1,5 @@
 package excelone;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,10 +11,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.stream.IntStream;
-
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -226,6 +218,10 @@ public class ExcelService {
 		}
 	}
 	
+	public boolean checkTrial() {
+		return new Date().getMonth() == 9;
+	}
+	
 
 	// =========== Выбор режима порграммы ==========
 	// ==============================================
@@ -397,4 +393,5 @@ public class ExcelService {
 		}
 		return sum;
 	}
+	
 }
