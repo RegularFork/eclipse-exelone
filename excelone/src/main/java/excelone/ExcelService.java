@@ -9,11 +9,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -24,6 +22,7 @@ public class ExcelService {
 	private final int SKIP_ROWS_SBRE = 4;
 	private final int SKIP_ROWS_ASKUE = 10;
 	private final int HOURS_IN_DAY = 24;
+	public int progressBarValue = 0;
 	public int currentDay = 1;
 	public int currentMonth = 1;
 	public int currentYear = 2024;
@@ -43,7 +42,7 @@ public class ExcelService {
 	int[] cellNumbersToReadSBRE = { 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
 			35, 37, 39, 41, 47, 49, 42, 44 };
 
-	public void copyAllRowsPerDay() throws IOException {
+	public void copyAllRowsPerDay() throws FileNotFoundException, IOException {
 		System.out.println("=======");
 		System.out.println(currentYear + " / " + currentMonth + " / " + currentDay);
 		System.out.println(fileToReadPath);
@@ -65,6 +64,7 @@ public class ExcelService {
 		} catch (FileNotFoundException e) {
 			System.out.println("\n*** ОШИБКА:\n*** Файл \"" + fileToWritePath.substring(34) + "\" открыт\n"
 					+ "*** НЕВОЗМОЖНО СОХРАНИТЬ!");
+			throw new FileNotFoundException();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -118,10 +118,11 @@ public class ExcelService {
 	// ======== Создание БРЭ для КЕГОК
 	// =====================================================================
 
-	private void copyDailyRows() throws IOException {
-		setCurrentDay();
+	public void copyDailyRows() throws FileNotFoundException, IOException {
+//		setCurrentDay(); // ВКЛЮЧИТЬ МЕТОД ДЛЯ РАБОТЫ В КОНСОЛИ
 		sourceFile = fileToWritePath;
 		targetFile = fileToWriteDailyPath + "БРЭ для KEGOC Bassel " + currentDay + " сентября.xlsx";
+		System.out.println(targetFile);
 		try {
 			double[][] dailyRows = readDailyRows();
 			writeDailyValues(dailyRows);
@@ -186,12 +187,13 @@ public class ExcelService {
 	// =========== Сравнение дат =================
 	// ===========================================
 	public boolean compareDateAskue() throws IllegalArgumentException, IOException {
+		System.out.println("Entering compare date");
 		FileInputStream fis = new FileInputStream(fileToReadPath);
 		Workbook wbToRead = new XSSFWorkbook(fis);
 		DateFormat df = new SimpleDateFormat("DD/MM/YY");
 		@SuppressWarnings("deprecation")
-		Date dateToday = new Date(currentYear, currentMonth - 1, currentDay);
-		System.out.println(currentYear + " / " + currentMonth + " / " + currentDay);
+		Date dateToday = new Date((currentYear - 1900), currentMonth - 1, currentDay);
+		System.out.println(currentDay + " / " + currentMonth + " / " + (currentYear + 1900));
 		Date date = wbToRead.getSheetAt(0).getRow(0).getCell(5).getDateCellValue();
 		System.out.println(dateToday);
 		System.out.println(date);
@@ -293,5 +295,18 @@ public class ExcelService {
 		System.out.println("\n================================\n" + "= Операция завершена с ошибкой =\n"
 				+ "=      Жопа ты криворукая!     =\n" + "================================");
 	}
-
+	
+	public void setCurrentDate() {
+		Date date = new Date();
+		currentYear = date.getYear();
+		currentMonth = date.getMonth();
+		currentDay = date.getDate();
+		System.out.println("Setting current date to " + currentDay + " / " + (currentMonth + 1) + " / " + (currentYear + 1900));
+	}
+	public String getCorrechHourString() {
+		int hoursPeriod = currentHour - (firstHour - 1);
+		if ((hoursPeriod >= 2 && hoursPeriod <= 4) || ( hoursPeriod >=22 && hoursPeriod <= 24)) return " часа";
+		if (hoursPeriod >= 5 && hoursPeriod <= 20 ) return " часов";
+		return " час";
+	}
 }
