@@ -33,11 +33,11 @@ public class ExcelService {
 	private int rowTarget = 507;
 	String sourceFile;
 	String targetFile;
-	public String fileToReadPath = "C:\\Users\\Shulk\\git\\eclipse-exelone\\excelone\\resources\\РасходПоОбъектам1.xlsx";
+	public String fileToReadPath = "C:\\Users\\commercial\\Documents\\РасходПоОбъектам1.xlsx";
 	// Test file
 //	private String fileToWritePath = "C:\\Users\\commercial\\Documents\\MyFiles\\excelpoint\\СЕНТЯБРЬ БРЭ result.xlsx";
 	// Original file
-	public String fileToWritePath = "C:\\Users\\Shulk\\git\\eclipse-exelone\\excelone\\resources\\СЕНТЯБРЬ БРЭ result.xlsx";
+	public String fileToWritePath = "\\\\172.16.16.16\\коммерческий отдел\\ОКТЯБРЬ БРЭ ежедневный.xlsx";
 	public String fileToWriteDailyTemplate = "C:\\Users\\commercial\\Documents\\MyFiles\\excelpoint\\KEGOC_template.xlsx";
 	public String fileToWriteDailyPath = "C:\\Users\\commercial\\Desktop\\Суточная ведомость\\";
 	int[] cellNumbersToReadSBRE = { 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
@@ -78,17 +78,17 @@ public class ExcelService {
 		Workbook wbToRead = new XSSFWorkbook(fileToRead);
 		System.out.println("WB is open");
 		try {
-			compareDate(wbToRead);
+			if(compareDateAskue()) {
+				Row rowToWrite = wbToRead.getSheetAt(0).getRow(currentRow);
+				for (int i = 0; i < 30; i++) {
+					readedValue[i] = rowToWrite.getCell(cellNumbersToReadSBRE[i]).getNumericCellValue();
+				}
+			}
 		} catch (IllegalArgumentException e) {
 			wbToRead.close();
 			throw new IllegalArgumentException();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		Row rowToWrite = wbToRead.getSheetAt(0).getRow(currentRow);
-		for (int i = 0; i < 30; i++) {
-			readedValue[i] = rowToWrite.getCell(cellNumbersToReadSBRE[i]).getNumericCellValue();
-
 		}
 		fileToRead.close();
 		wbToRead.close();
@@ -185,12 +185,14 @@ public class ExcelService {
 
 	// =========== Сравнение дат =================
 	// ===========================================
-	public void compareDate(Workbook wbToWrite) throws IllegalArgumentException, IOException {
+	public boolean compareDateAskue() throws IllegalArgumentException, IOException {
+		FileInputStream fis = new FileInputStream(fileToReadPath);
+		Workbook wbToRead = new XSSFWorkbook(fis);
 		DateFormat df = new SimpleDateFormat("DD/MM/YY");
 		@SuppressWarnings("deprecation")
 		Date dateToday = new Date(currentYear, currentMonth - 1, currentDay);
 		System.out.println(currentYear + " / " + currentMonth + " / " + currentDay);
-		Date date = wbToWrite.getSheetAt(0).getRow(0).getCell(5).getDateCellValue();
+		Date date = wbToRead.getSheetAt(0).getRow(0).getCell(5).getDateCellValue();
 		System.out.println(dateToday);
 		System.out.println(date);
 
@@ -200,10 +202,14 @@ public class ExcelService {
 //		if (cell1.equals(cell2)) {
 		if (dateToday.compareTo(date) == 0) {
 			System.out.println("Дата соответствует");
+			fis.close();
+			return true;
 		} else {
 			System.out.println(
 					"\n*** ОШИБКА:\n*** Введённая дата не совпадает с датой в файле \"РасходПоОбъектам1.xlsx\"\n");
-			throw new IllegalArgumentException();
+			fis.close();
+			return false;
+//			throw new IllegalArgumentException();
 		}
 	}
 	

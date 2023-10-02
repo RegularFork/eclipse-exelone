@@ -20,6 +20,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import java.awt.Window.Type;
@@ -90,7 +91,7 @@ public class Window {
 		
 		textSourceField = new JTextField();
 		textSourceField.setBackground(SystemColor.inactiveCaptionBorder);
-		textSourceField.setText("C:\\Users\\commercial\\Documents\\РасходПоОбъектам1.xlsx");
+		textSourceField.setText(service.fileToReadPath);
 		textSourceField.setEditable(false);
 		textSourceField.setBounds(7, 86, 567, 20);
 		frame.getContentPane().add(textSourceField);
@@ -103,7 +104,7 @@ public class Window {
 		getSourceFileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setCurrentDirectory(new File("C:\\Users\\commercial\\Documents\\РасходПоОбъектам1.xlsx"));
+				fileChooser.setCurrentDirectory(new File(service.fileToReadPath));
 				// fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
 				fileChooser.setFileFilter(new FileFilter() {
@@ -148,7 +149,7 @@ public class Window {
 		
 		textTargetField = new JTextField();
 		textTargetField.setBackground(SystemColor.inactiveCaptionBorder);
-		textTargetField.setText("\\\\172.16.16.16\\коммерческий отдел\\СЕНТЯБРЬ БРЭ ежедневный заполнять его!!!.xlsx");
+		textTargetField.setText(service.fileToWritePath);
 		textTargetField.setEditable(false);
 		textTargetField.setColumns(10);
 		textTargetField.setBounds(7, 141, 567, 20);
@@ -160,7 +161,7 @@ public class Window {
 		getTargetFileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setCurrentDirectory(new File("C:\\Users\\Shulk\\git\\eclipse-exelone\\excelone\\resources\\"));
+				fileChooser.setCurrentDirectory(new File(service.fileToWritePath));
 				// fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
 				fileChooser.setFileFilter(new FileFilter() {
@@ -214,7 +215,7 @@ public class Window {
 		frame.getContentPane().add(cancelTargetFileButton);
 
 		JProgressBar progressBar = new JProgressBar();
-		progressBar.setBounds(10, 436, 564, 14);
+		progressBar.setBounds(7, 436, 567, 14);
 		progressBar.setValue(30);
 		frame.getContentPane().add(progressBar);
 		
@@ -223,6 +224,7 @@ public class Window {
 		frame.getContentPane().add(separator);
 		
 		final JComboBox hourFromCombo = new JComboBox();
+		final JComboBox hourUntilCombo = new JComboBox();
 		hourFromCombo.setBackground(SystemColor.inactiveCaptionBorder);
 		hourFromCombo.setToolTipText("Указывается прошедший час");
 		hourFromCombo.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
@@ -236,15 +238,19 @@ public class Window {
 					service.firstHour = compareFirst;
 					System.out.println("firstHour set to " + service.firstHour);
 				} else {
-				service.firstHour = service.currentHour;
+				service.firstHour = compareFirst;
+				service.currentHour = compareFirst;
 				System.out.println("firstHour set to " + service.firstHour);
-				hourFromCombo.setSelectedItem(String.valueOf(service.currentHour));
+				System.out.println("currenttHour up to " + service.currentHour);
+				hourFromCombo.setSelectedItem(String.valueOf(service.firstHour));
+				hourUntilCombo.setSelectedItem(String.valueOf(service.currentHour));
+				
 				}
 			}
 		});
 		frame.getContentPane().add(hourFromCombo);
 		
-		final JComboBox hourUntilCombo = new JComboBox();
+//		final JComboBox hourUntilCombo = new JComboBox();
 		hourUntilCombo.setBackground(SystemColor.inactiveCaptionBorder);
 		hourUntilCombo.setToolTipText("Указывается прошедший час");
 		hourUntilCombo.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"}));
@@ -258,9 +264,12 @@ public class Window {
 				service.currentHour = compareLast;
 				System.out.println("currentHour set to " + service.currentHour);
 				} else {
-					service.currentHour = service.firstHour;
-					System.out.println("firstHour set to " + service.firstHour);
-					hourUntilCombo.setSelectedItem(String.valueOf(service.firstHour));
+					service.currentHour = compareLast;
+					service.firstHour = compareLast;
+					System.out.println("currentHour set to " + service.currentHour);
+					System.out.println("firstHour down to " + service.firstHour);
+					hourUntilCombo.setSelectedItem(String.valueOf(service.currentHour));
+					hourFromCombo.setSelectedItem(String.valueOf(service.firstHour));
 				}
 			}
 		});
@@ -317,16 +326,29 @@ public class Window {
 			
 			public void actionPerformed(ActionEvent e) {
 				
-				
-				
 				try {
-					service.copyAllRowsPerDay();
-					System.out.println("Copy Complete!");
+					if(!service.compareDateAskue()) JOptionPane.showMessageDialog(frame, 
+							("Различные даты в \n" + new File(service.fileToReadPath).getName() + "\nи\n" + new File(service.fileToWritePath).getName()),
+							"Ошибка",
+							JOptionPane.ERROR_MESSAGE);
+					else {
+						int input = JOptionPane.showConfirmDialog(frame, ("Скопировать данные в\n" + new File(service.fileToWritePath).getName()), "Подтвердить действие", JOptionPane.YES_NO_OPTION);
+						System.out.println(input);
+//						try {
+//							service.copyAllRowsPerDay();
+//							System.out.println("Copy Complete!");
+//						} catch (IOException e1) {
+//							// TODO Auto-generated catch block
+//							e1.printStackTrace();
+//						}
+					}
+				} catch (IllegalArgumentException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}
-				
+				}				
 			}
 		});
 		frame.getContentPane().add(startCopyBreButton);
@@ -340,36 +362,6 @@ public class Window {
 		titleBRE_1.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 13));
 		titleBRE_1.setBounds(7, 270, 264, 14);
 		frame.getContentPane().add(titleBRE_1);
-		
-//		JLabel dataKEGOCLabel_1 = new JLabel("Дата");
-//		dataKEGOCLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-//		dataKEGOCLabel_1.setBounds(28, 192, 46, 14);
-//		frame.getContentPane().add(dataKEGOCLabel_1);
-//		
-//		textDataKegocField = new JTextField();
-//		textDataKegocField.setBackground(SystemColor.inactiveCaptionBorder);
-//		textDataKegocField.setToolTipText("Дата снятия показаний");
-//		textDataKegocField.setEditable(false);
-//		textDataKegocField.setColumns(10);
-//		textDataKegocField.setBounds(11, 209, 86, 22);
-//		chDate2.setTextField(textDataKegocField);
-//		System.out.println(service.currentDay + " / " + service.currentMonth + " / " + service.currentYear);
-//		chDate2.setLabelCurrentDayVisible(false);
-//		chDate2.addActionDateChooserListener(new DateChooserAdapter() {
-//
-//			@Override
-//			public void dateChanged(Date date, DateChooserAction action) {
-//				// TODO Auto-generated method stub
-//
-//				service.currentDay = date.getDate();
-//				service.currentMonth = date.getMonth() + 1;
-//				service.currentYear = date.getYear() + 1900;
-//				chDate.setTextField(textDataKegocField);
-//				System.out.println(service.currentDay + " / " + service.currentMonth + " / " + service.currentYear);
-//			}
-//
-//		});
-//		frame.getContentPane().add(textDataKegocField);
 		
 		textKegocField = new JTextField();
 		textKegocField.setBackground(SystemColor.inactiveCaptionBorder);
@@ -435,11 +427,14 @@ public class Window {
 		startCopyBreButton_1.setBounds(370, 319, 204, 23);
 		frame.getContentPane().add(startCopyBreButton_1);
 		
+		JLabel progressLabel = new JLabel("Progress...");
+		progressLabel.setBounds(7, 415, 119, 22);
+		frame.getContentPane().add(progressLabel);
+		
 		FlatIntelliJLaf.registerCustomDefaultsSource("style");
 		FlatIntelliJLaf.setup();
 
 		frame.revalidate();
 		
 	}
-
 }
