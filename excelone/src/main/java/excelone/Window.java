@@ -29,6 +29,8 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.raven.datechooser.DateChooser;
 import com.raven.datechooser.listener.DateChooserAction;
 import com.raven.datechooser.listener.DateChooserAdapter;
+import java.awt.Color;
+import java.awt.Window.Type;
 
 public class Window {
 
@@ -75,6 +77,7 @@ public class Window {
 		service.setCurrentDate();
 
 		frame = new JFrame("ЛЕНИВАЯ ЖОПА v2.0");
+		frame.setType(Type.POPUP);
 		frame.getContentPane().setFont(new Font("Arial Narrow", Font.PLAIN, 11));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -101,8 +104,9 @@ public class Window {
 		frame.revalidate();
 
 		JButton getSourceFileButton = new JButton("Выбрать источник данных");
+		getSourceFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		getSourceFileButton.setToolTipText("Выбрать файл \"РасходПоОбъектам\" для извлечения данных");
-		getSourceFileButton.setBackground(UIManager.getColor("Button.light"));
+		getSourceFileButton.setBackground(SystemColor.text);
 		getSourceFileButton.setBounds(7, 107, 205, 23);
 		getSourceFileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -160,8 +164,9 @@ public class Window {
 		frame.getContentPane().add(textTargetField);
 
 		getTargetFileButton = new JButton("Выбрать файл для записи");
+		getTargetFileButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		getTargetFileButton.setToolTipText("Выбрать файл \"Ежедневный БРЭ\" для записи данных");
-		getTargetFileButton.setBackground(UIManager.getColor("Button.light"));
+		getTargetFileButton.setBackground(SystemColor.text);
 		getTargetFileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
@@ -330,7 +335,8 @@ public class Window {
 		frame.getContentPane().add(dataKEGOCLabel);
 
 		JButton startCopyBreButton = new JButton("Копировать данные");
-		startCopyBreButton.setBackground(UIManager.getColor("Button.light"));
+		startCopyBreButton.setFont(new Font("Tahoma", Font.BOLD, 11));
+		startCopyBreButton.setBackground(SystemColor.inactiveCaption);
 		startCopyBreButton.setToolTipText("Запустить копирование данных");
 		startCopyBreButton.setBounds(369, 162, 205, 23);
 		startCopyBreButton.addActionListener(new ActionListener() {
@@ -402,8 +408,9 @@ public class Window {
 		frame.getContentPane().add(textKegocField);
 
 		JButton setKegocFolderButton = new JButton("Выбрать папку");
+		setKegocFolderButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		setKegocFolderButton.setToolTipText("Выбрать файл \"РасходПоОбъектам\" для извлечения данных");
-		setKegocFolderButton.setBackground(UIManager.getColor("Button.light"));
+		setKegocFolderButton.setBackground(SystemColor.text);
 		setKegocFolderButton.setBounds(7, 294, 204, 23);
 		setKegocFolderButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -440,8 +447,9 @@ public class Window {
 		frame.getContentPane().add(cancelKegocFileButton);
 
 		JButton createFileBre = new JButton("Создать файл");
+		createFileBre.setFont(new Font("Tahoma", Font.BOLD, 11));
 		createFileBre.setToolTipText("Создание ежедневного файла \"БРЭ для КЕГОК\"");
-		createFileBre.setBackground(UIManager.getColor("Button.light"));
+		createFileBre.setBackground(SystemColor.inactiveCaption);
 		createFileBre.setBounds(370, 294, 204, 23);
 		createFileBre.addActionListener(new ActionListener() {
 
@@ -472,18 +480,22 @@ public class Window {
 		frame.getContentPane().add(createFileBre);
 		
 		JLabel maxLabel = new JLabel("Максимум");
-		maxLabel.setBounds(25, 390, 71, 14);
+		maxLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		maxLabel.setBounds(25, 390, 86, 14);
 		frame.getContentPane().add(maxLabel);
 		
 		JLabel minLabel = new JLabel("Минимум");
-		minLabel.setBounds(181, 390, 71, 14);
+		minLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		minLabel.setBounds(181, 390, 83, 14);
 		frame.getContentPane().add(minLabel);
 		
 		JLabel avgLabel = new JLabel("Среднее");
-		avgLabel.setBounds(337, 390, 71, 14);
+		avgLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		avgLabel.setBounds(337, 390, 86, 14);
 		frame.getContentPane().add(avgLabel);
 		
 		JLabel totalLabel = new JLabel("Всего");
+		totalLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		totalLabel.setBounds(489, 390, 71, 14);
 		frame.getContentPane().add(totalLabel);
 		
@@ -497,26 +509,32 @@ public class Window {
 		frame.getContentPane().add(statsDailyLabel);
 		
 		final JLabel maxValueLabel = new JLabel("0");
+		maxValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		maxValueLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		maxValueLabel.setBounds(25, 419, 86, 14);
 		frame.getContentPane().add(maxValueLabel);
 		
 		final JLabel minValueLabel = new JLabel("0");
+		minValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		minValueLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		minValueLabel.setBounds(181, 415, 83, 14);
 		frame.getContentPane().add(minValueLabel);
 		
 		final JLabel avgValueLabel = new JLabel("0");
+		avgValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		avgValueLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		avgValueLabel.setBounds(337, 415, 86, 14);
 		frame.getContentPane().add(avgValueLabel);
 		
 		final JLabel totalValueLabel = new JLabel("0");
+		totalValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		totalValueLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		totalValueLabel.setBounds(489, 415, 71, 14);
 		frame.getContentPane().add(totalValueLabel);
 		
 		JButton statsButton = new JButton("Получить статистику");
+		statsButton.setFont(new Font("Tahoma", Font.BOLD, 11));
+		statsButton.setBackground(SystemColor.text);
 		statsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -533,7 +551,7 @@ public class Window {
 				}
 			}
 		});
-		statsButton.setBounds(7, 443, 205, 23);
+		statsButton.setBounds(7, 447, 205, 23);
 		frame.getContentPane().add(statsButton);
 
 	}

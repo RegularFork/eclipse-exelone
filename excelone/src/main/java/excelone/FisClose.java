@@ -10,7 +10,7 @@ public class FisClose {
 		System.out.println("FIS close");
 		// TODO Auto-generated method stub
 		try {
-			FileInputStream fis = new FileInputStream("\\\\172.16.16.16\\коммерческий отдел\\СЕНТЯБРЬ БРЭ ежедневный заполнять его!!!.xlsx");
+			FileInputStream fis = new FileInputStream("\\\\172.16.16.16\\коммерческий отдел\\test.xlsx");
 			fis.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
