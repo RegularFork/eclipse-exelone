@@ -39,6 +39,8 @@ public class ExcelService {
 	public String fileToWritePath = "\\\\172.16.16.16\\коммерческий отдел\\ОКТЯБРЬ БРЭ ежедневный.xlsx";
 	public String fileToWriteDailyTemplate = "C:\\Users\\commercial\\Documents\\MyFiles\\excelpoint\\KEGOC_template.xlsx";
 	public String fileToWriteDailyPath = "C:\\Users\\commercial\\Desktop\\Суточная ведомость\\";
+	public String analyzePath = "\\\\172.16.16.16\\коммерческий отдел\\Анализ_октябрь.xlsx";
+	public String analyzeFileName = "Анализ_октябрь.xlsx";
 	int[] cellNumbersToReadSBRE = { 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
 			35, 37, 39, 41, 47, 49, 42, 44 };
 
@@ -123,7 +125,7 @@ public class ExcelService {
 	public void copyDailyRows() throws FileNotFoundException, IOException {
 //		setCurrentDay(); // ВКЛЮЧИТЬ МЕТОД ДЛЯ РАБОТЫ В КОНСОЛИ
 		sourceFile = fileToWritePath;
-		targetFile = fileToWriteDailyPath + "БРЭ для KEGOC Bassel " + currentDay + getMonthStringName()+ ".xlsx";
+		targetFile = fileToWriteDailyPath + "БРЭ для KEGOC Bassel " + currentDay + getMonthStringNameWithSuffix()+ ".xlsx";
 		System.out.println(targetFile);
 		try {
 			double[][] dailyRows = readDailyRows();
@@ -133,6 +135,7 @@ public class ExcelService {
 		} catch (FileNotFoundException e) {
 			System.out.println("\n*** ОШИБКА:\n*** Файл \"БРЭ для KEGOC Bassel " + currentDay
 					+ " сентября.xlsx\" открыт\n" + "*** НЕВОЗМОЖНО СОХРАНИТЬ!");
+			throw new FileNotFoundException();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -166,24 +169,34 @@ public class ExcelService {
 	// Запись данных в новый файл БРЭ для КЕГОК
 	private void writeDailyValues(double[][] dailyRows)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
-		FileInputStream fis = new FileInputStream(fileToWriteDailyTemplate);
-		Workbook wb = new XSSFWorkbook(fis);
-		Sheet sheet = wb.getSheetAt(0);
-		sheet.setForceFormulaRecalculation(true);
-		for (int rows = 0; rows < 24; rows++) {
-			for (int columns = 0; columns < 28; columns++) {
-				sheet.getRow(rows + 4).getCell(columns + 5).setCellValue(dailyRows[rows][columns]);
+		FileInputStream fis = null;
+		Workbook wb = null;
+		try {
+			fis = new FileInputStream(fileToWriteDailyTemplate);
+			wb = new XSSFWorkbook(fis);
+			Sheet sheet = wb.getSheetAt(0);
+			sheet.setForceFormulaRecalculation(true);
+			for (int rows = 0; rows < 24; rows++) {
+				for (int columns = 0; columns < 28; columns++) {
+					sheet.getRow(rows + 4).getCell(columns + 5).setCellValue(dailyRows[rows][columns]);
+				}
+				sheet.getRow(rows + 4).getCell(2).setCellValue(dailyRows[rows][28]);
+				sheet.getRow(rows + 4).getCell(3).setCellValue(dailyRows[rows][29]);
+				System.out.println("Записаны данные часа " + rows + " - " + (rows + 1));
 			}
-			sheet.getRow(rows + 4).getCell(2).setCellValue(dailyRows[rows][28]);
-			sheet.getRow(rows + 4).getCell(3).setCellValue(dailyRows[rows][29]);
-			System.out.println("Записаны данные часа " + rows + " - " + (rows + 1));
+			sheet.getRow(0).getCell(0).setCellValue(new GregorianCalendar(2023, currentMonth - 1, currentDay));
+			fis.close();
+		} catch (FileNotFoundException e) {
+			fis.close();
+			wb.close();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		sheet.getRow(0).getCell(0).setCellValue(new GregorianCalendar(2023, currentMonth - 1, currentDay));
-		fis.close();
+		
 		FileOutputStream fos = new FileOutputStream(targetFile);
 		wb.write(fos);
-		wb.close();
 		fos.close();
+		wb.close();
 		isSuccess = true;
 	}
 
@@ -307,7 +320,7 @@ public class ExcelService {
 		Date date = new Date();
 		currentYear = date.getYear();
 		currentMonth = date.getMonth();
-		currentDay = date.getDate();
+		currentDay = date.getDate() + 1;
 		System.out.println("Setting current date to " + currentDay + " / " + (currentMonth + 1) + " / " + (currentYear + 1900));
 	}
 	public String getCorrechHourString() {
@@ -316,7 +329,7 @@ public class ExcelService {
 		if (hoursPeriod >= 5 && hoursPeriod <= 20 ) return " часов";
 		return " час";
 	}
-	public String getMonthStringName() {
+	public String getMonthStringNameWithSuffix() {
 		if (currentMonth == 1) return " января";
 		if (currentMonth == 2) return " февраля";
 		if (currentMonth == 3) return " марта";
@@ -392,6 +405,75 @@ public class ExcelService {
 			sum += val;
 		}
 		return sum;
+	}
+	
+	public String getMonthStringName() {
+		if (currentMonth == 1) return " январь";
+		if (currentMonth == 2) return " февраль";
+		if (currentMonth == 3) return " март";
+		if (currentMonth == 4) return " апрель";
+		if (currentMonth == 5) return " май";
+		if (currentMonth == 6) return " июнь";
+		if (currentMonth == 7) return " июль";
+		if (currentMonth == 8) return " август";
+		if (currentMonth == 9) return " сентябрь";
+		if (currentMonth == 10) return " октябрь";
+		if (currentMonth == 11) return " ноябрь";
+		if (currentMonth == 12) return " декабрь";
+		return " месяц";
+	}
+	
+	public double[][] getColumnsArrayFromBre(int ... columns) throws IOException{
+		double[][] result = new double[currentHour - firstHour + 1][columns.length];
+		
+		FileInputStream fis = null;
+		Workbook wb = null;
+		try {
+			fis = new FileInputStream(fileToWritePath);
+			wb = new XSSFWorkbook(fis);
+		} catch (FileNotFoundException e) {
+			fis.close();
+			wb.close();
+			e.printStackTrace();
+		}
+		for (int i = 0; i < result.length; i++) {
+			int targetRow = ((currentDay - 1) * HOURS_IN_DAY + SKIP_ROWS_SBRE) + firstHour - 1;
+			for (int j = 0; j < columns.length; j++) {
+				System.out.println(targetRow);
+				System.out.println("row: " + i + " / column: " + j);
+				result[i][j] = wb.getSheetAt(0).getRow(targetRow + i).getCell(columns[j]).getNumericCellValue();
+				System.out.println("result: " + result[i][j]);
+				if (result[i][j] == -7) result[i][j] = 0;
+			}
+		}
+		fis.close();
+		wb.close();
+		return result;
+	}
+	public void fillAnalyze(double[][] dataArray, int ... columns) throws IOException {
+		
+		try (FileInputStream fis  = new FileInputStream(analyzePath); Workbook wb = new XSSFWorkbook(fis)) {
+			Sheet sheet = wb.getSheetAt(0);
+			sheet.setForceFormulaRecalculation(true);
+			for (int i = 0; i < dataArray.length; i++) {
+				for (int j = 0; j < columns.length; j++) {
+					int targetRow = (3 + (currentDay - 1) * 25) + i + firstHour - 1;
+					if (targetRow >= sheet.getLastRowNum() - 1) {
+						wb.close();
+						fis.close();
+						throw new IllegalArgumentException();
+					}
+				sheet.getRow(targetRow).getCell(columns[j]).setCellValue(dataArray[i][j]);
+				}
+			}
+			fis.close();
+			FileOutputStream fos = new FileOutputStream(analyzePath);
+			wb.write(fos);
+			wb.close();
+			fos.close();
+			System.out.println("Analyze file write success");
+		}
+		
 	}
 	
 }
